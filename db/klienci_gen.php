@@ -12,7 +12,7 @@ $nazwiska = explode("\n",$nazwiska);
 #print_r($imiona);
 
 
-/* Prepared statement, stage 1: prepare */
+
 $stmt = $mysqli->prepare("INSERT INTO klienci(imie,nazwisko,nr_tel,email,data_ur) VALUES (?,?,?,?,?)");
 
 for($i =0 ; $i<1000;$i++){

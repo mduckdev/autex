@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap');
+
+a {
+    text-decoration: none;
+}
+
+body {
+    margin: 0;
+    background-image: url("../img/background.jpg");
+    background-size: cover;
+    overflow-x: hidden;
+}
+
+#navbar {
+    width: 100vw;
+    height: 6vh;
+    background-color: rgb(19, 18, 18);
+    padding: 25px;
+    display: flex;
+
+}
+
+#navcontainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#navcontainer a {
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    margin-right: 35px;
+    font-size: 1.5em;
+    transition: 250ms;
+}
+
+#navcontainer a:hover {
+    color: yellow;
+}
+
+
+#navcontainer #last_item {
+    margin-right: 55px;
+}
+
+#navlogo {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    gap: 15px;
+    font-size: 1.5em;
+}
+
+#navbar #navlogo img {
+    max-height: 100%;
+}
+
+.transparent_background {
+    background-color: rgba(0, 0, 0, 0.7);
+    font-family: 'Roboto', sans-serif;
+    width: 60vw;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 15px;
+    margin-top: 3vh;
+    color: white;
+}
+
+#slogan {
+    font-size: 3em;
+}
+
+#about_us p {
+    font-size: 1.7em;
+}
+
+#offer {
+    background: white;
+    color: black;
+    width: 15%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding: 15px;
+    cursor: pointer;
+    transition: 250ms;
+}
+
+#offer:hover {
+    color: yellow;
+    background-color: black;
+}
