@@ -29,11 +29,8 @@ function klienci_gen()
         $email = str_replace("\\\\r", "", $email);
 
 
-        echo "$imie $nazwisko $nr_tel $email $data_ur <br>";
+        //echo "$imie $nazwisko $nr_tel $email $data_ur <br>";
         $stmt->bind_param("sssss", $imie, $nazwisko, $nr_tel, $email, $data_ur);
         $stmt->execute();
     }
-
-
 }
-

@@ -28,14 +28,8 @@ function flota_gen()
         $moc_km = random_int(90, 200);
 
 
-        echo "$marka,$model,$rocznik,$kolor,$przebieg,$moc_km <br>";
+        //echo "$marka,$model,$rocznik,$kolor,$przebieg,$moc_km <br>";
         $stmt->bind_param("ssisii", $marka, $model, $rocznik, $kolor, $przebieg, $moc_km);
         $stmt->execute();
     }
-
-
 }
-
-
-
-echo "aaa";

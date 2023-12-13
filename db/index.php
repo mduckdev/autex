@@ -8,6 +8,13 @@
 </head>
 
 <body>
+    <script>
+        if ((window.location.href.indexOf("?ok=1") <= -1)) {
+            if (window.confirm("Czy na pewno chcesz usunąć rekordy z bazy danych i zastąpić je losowymi?")) {
+                window.location.replace("./index.php?ok=1");
+            }
+        }
+    </script>
     <?php
     if (!isset($_GET["ok"]))
         return;
@@ -33,14 +40,7 @@
 
     ?>
 
-    <script>
-        if ((window.location.href.indexOf("?ok=1") <= -1)) {
-            if (window.confirm("Czy na pewno chcesz usunąć rekordy z bazy danych i zastąpić je losowymi?")) {
-                window.location.replace("./index.php?ok=1");
-            }
-        }
 
-    </script>
 </body>
 
 </html>
