@@ -2,7 +2,7 @@
 function wypozyczenia_gen()
 {
     //zwrocone auta
-    $mysqli = mysqli_connect("localhost", "root", "", "wypozyczalnia");
+    require(dirname(__FILE__) ."/". "../includes/db.php");
     mysqli_set_charset($mysqli, "utf8");
 
     $cars_id_result = $mysqli->query("SELECT id FROM flota;");
