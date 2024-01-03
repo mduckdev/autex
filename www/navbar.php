@@ -9,6 +9,8 @@
         <div id="navcontainer">
         <a href="#">Wypożycz samochód</a>
         <a href="#">Zwróć samochód</a>
-        <a href="#" id="last_item">Wypożyczenia</a>
+        <a href="#">Wypożyczenia</a>
+
+        <a href="login.php" id="last_item">Logowanie | Rejestracja</a>
         </div>
 </nav>

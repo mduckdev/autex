@@ -1,0 +1,56 @@
+#formContainer{
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 100vw;
+    height: 100vh;
+    padding: 30px;
+}
+form {
+    background-color: white;
+    padding: 75px 35px 75px 35px;
+    display: flex;
+    flex-direction: column;
+    width: 20vw;
+    margin-right: auto;
+    margin-left: auto;
+    gap: 20px;
+    text-align: center;
+    border-radius: 25px;
+}
+form input[type=text],form input[type=password]{
+    border: 0;
+    border-bottom: 2px solid black;
+    transition: 250ms;
+}
+form input[type=text]:focus,form input[type=password]:focus{
+    outline: none;
+    border-bottom: 2px solid yellow;
+}
+
+form input[type=text]::placeholder,form input[type=password]::placeholder{
+    font-size: 130%;
+}
+
+form a{
+    text-decoration: none;
+    color:black;
+}
+form a:hover{
+    text-decoration: underline;
+}
+form input[type=submit]{
+    padding: 15px;
+    background-color: black;
+    color:white;
+    border: none;
+    border-radius: 100px;
+    transition: 250ms;
+}
+form input[type=submit]:hover{
+    color:yellow;
+    cursor: pointer;
+}
+
+#info p{
+    color:rgb(192, 12, 12);
+    text-decoration:underline;
+}
