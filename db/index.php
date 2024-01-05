@@ -22,7 +22,7 @@
     require("klienci_gen.php");
     require("wypozyczenia_gen.php");
 
-    require(dirname(__FILE__) ."/". "../includes/db.php");
+    require(dirname(__FILE__) ."/". "../www/includes/db.php");
     mysqli_set_charset($mysqli, "utf8");
 
     mysqli_execute_query($mysqli, "SET FOREIGN_KEY_CHECKS = 0;");

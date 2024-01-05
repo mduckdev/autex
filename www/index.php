@@ -1,3 +1,6 @@
+<?php
+    require(dirname(__FILE__) ."/". "./includes/session.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

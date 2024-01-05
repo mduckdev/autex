@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 29, 2023 at 12:36 PM
+-- Generation Time: Jan 05, 2024 at 12:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -1269,6 +1269,28 @@ INSERT INTO `klienci` (`id`, `imie`, `nazwisko`, `nr_tel`, `email`, `data_ur`) V
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `uzytkownicy`
+--
+
+CREATE TABLE `uzytkownicy` (
+  `id` int(11) NOT NULL,
+  `nazwa_uzytkownika` varchar(20) NOT NULL,
+  `haslo` varchar(255) NOT NULL,
+  `imie` varchar(25) DEFAULT NULL,
+  `nazwisko` varchar(30) DEFAULT NULL,
+  `aktywne` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
+
+--
+-- Dumping data for table `uzytkownicy`
+--
+
+INSERT INTO `uzytkownicy` (`id`, `nazwa_uzytkownika`, `haslo`, `imie`, `nazwisko`, `aktywne`) VALUES
+(1, 'admin', '$2y$10$QZRrQvZxzmlLLvaIj9ovG.os8eK1suoPlJE/MndAA741K9mSPcJz2', '', '', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `wypozyczenia`
 --
 
@@ -1639,6 +1661,12 @@ ALTER TABLE `klienci`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `uzytkownicy`
+--
+ALTER TABLE `uzytkownicy`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `wypozyczenia`
 --
 ALTER TABLE `wypozyczenia`
@@ -1661,6 +1689,12 @@ ALTER TABLE `flota`
 --
 ALTER TABLE `klienci`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1001;
+
+--
+-- AUTO_INCREMENT for table `uzytkownicy`
+--
+ALTER TABLE `uzytkownicy`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `wypozyczenia`

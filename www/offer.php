@@ -1,3 +1,6 @@
+<?php
+    require(dirname(__FILE__) ."/". "./includes/session.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,23 +41,26 @@
 
 
             <?php
-            require(dirname(__FILE__) ."/". "../includes/db.php");
+            require(dirname(__FILE__) ."/". "./includes/db.php");
+            
+            
 
             if (!isset($_GET['limit']) || !is_numeric($_GET['limit']) || intval($_GET['limit']) <= 0 || intval($_GET['limit']) > 200)
                 $limit = 25;
             else
                 $limit = mysqli_real_escape_string($mysqli, intval($_GET['limit']));
 
-            //print_r($_GET['limit']);
+            
             if (!isset($_GET["q"]) || $_GET["q"] == "") {
                 $sql = "SELECT * FROM flota LIMIT ?";
                 $stmt = $mysqli->prepare($sql);
                 $stmt->bind_param("i", $limit);
             } else {
                 $query = mysqli_real_escape_string($mysqli, $_GET["q"]);
-                $sql = "SELECT * FROM flota  WHERE MATCH(marka,model,kolor) AGAINST(? IN NATURAL LANGUAGE MODE) LIMIT ?";
+                $sql = "SELECT * FROM flota  WHERE LOWER(marka) LIKE ? OR LOWER(model) LIKE ? OR LOWER(kolor) LIKE ? LIMIT ?";
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("si", $query, $limit);
+                $param = "%". strtolower($query) ."%";
+                $stmt->bind_param("sssi", $param,$param,$param, $limit);
             }
 
 

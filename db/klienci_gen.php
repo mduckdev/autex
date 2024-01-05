@@ -2,7 +2,7 @@
 
 function klienci_gen()
 {
-    require(dirname(__FILE__) ."/". "../includes/db.php");
+    require(dirname(__FILE__) ."/". "../www/includes/db.php");
     mysqli_set_charset($mysqli, "utf8");
 
     $imiona = file_get_contents("lists/imiona.txt");

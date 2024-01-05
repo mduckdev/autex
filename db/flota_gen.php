@@ -2,7 +2,7 @@
 
 function flota_gen()
 {
-    require(dirname(__FILE__) ."/". "../includes/db.php");
+    require(dirname(__FILE__) ."/". "../www/includes/db.php");
     mysqli_set_charset($mysqli, "utf8");
 
     $samochody = file_get_contents("lists/samochody.txt");
