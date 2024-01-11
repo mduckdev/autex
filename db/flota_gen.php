@@ -2,7 +2,7 @@
 
 function flota_gen()
 {
-    require(dirname(__FILE__) ."/". "../www/includes/db.php");
+    require(dirname(__FILE__) . "/" . "../www/includes/db.php");
     mysqli_set_charset($mysqli, "utf8");
 
     $samochody = file_get_contents("lists/samochody.txt");
@@ -22,6 +22,7 @@ function flota_gen()
 
         $marka = mysqli_real_escape_string($mysqli, $samochod[0]);
         $model = mysqli_real_escape_string($mysqli, $samochod[1]);
+        $model = str_replace("\\r", "", $model);
         $rocznik = random_int(2012, 2021);
         $kolor = $kolory[array_rand($kolory)];
         $przebieg = random_int(10, 300000);
@@ -30,7 +31,7 @@ function flota_gen()
 
         //echo "$marka,$model,$rocznik,$kolor,$przebieg,$moc_km <br>";
         $stmt->bind_param("ssisii", $marka, $model, $rocznik, $kolor, $przebieg, $moc_km);
-        
+
 
 
 
@@ -38,5 +39,3 @@ function flota_gen()
     }
 }
 #flota_gen();
-
-

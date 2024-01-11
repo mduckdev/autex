@@ -2,12 +2,20 @@
 
 require("session.php");
 
-if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
-    header ("Location: /autex/www/login.php");
-    die();
-} else{
-
-    echo "Zalogowany"; 
+function isLoggedIn()
+{
+    if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] != 1) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
-?>
+function requireAuth()
+{
+    if (!(isLoggedIn())) {
+        header("Location: /autex/www/login.php");
+        echo ("XD");
+        die();
+    }
+}

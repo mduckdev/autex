@@ -2,7 +2,7 @@
 function wypozyczenia_gen()
 {
     //zwrocone auta
-    require(dirname(__FILE__) ."/". "../www/includes/db.php");
+    require(dirname(__FILE__) . "/" . "../www/includes/db.php");
     mysqli_set_charset($mysqli, "utf8");
 
     $cars_id_result = $mysqli->query("SELECT id FROM flota;");
@@ -15,11 +15,13 @@ function wypozyczenia_gen()
     $stmt = $mysqli->prepare("INSERT INTO wypozyczenia(id_auta,id_klienta,data_wypozyczenia,data_zwrotu) VALUES (?,?,?,?)");
 
     $cars_ids_copy = $cars_ids;
+    $client_ids_copy = $client_ids;
     for ($i = 0; $i < 150; $i++) {
         shuffle($cars_ids_copy);
         $id_auta = array_pop($cars_ids_copy)["id"];
 
-        $id_klienta = $client_ids[array_rand($client_ids, 1)];
+        shuffle($client_ids_copy);
+        $id_klienta = array_pop($client_ids_copy)["id"];
 
         $start_date_timestamp = random_int(1641034364, 1672572602); // Sat Jan 01 2022-Sun Jan 01 2023
         $end_date_timestamp = random_int($start_date_timestamp + (86400 * 2), $start_date_timestamp + (86400 * 14));
@@ -37,7 +39,8 @@ function wypozyczenia_gen()
         $id_auta = array_pop($cars_ids_copy)["id"];
 
 
-        $id_klienta = $client_ids[array_rand($client_ids, 1)];
+        shuffle($client_ids_copy);
+        $id_klienta = array_pop($client_ids_copy)["id"];
 
 
         $start_date_timestamp = random_int(1609498364, 1641034364); // Fri Jan 01 2023-Sat Jan 01 2022
@@ -63,7 +66,9 @@ function wypozyczenia_gen()
         $current_date = time();
         $start_date_timestamp = random_int($current_date - (86400 * 6), $current_date);
         $start_date = date("Y-m-d", $start_date_timestamp);
-        $id_klienta = $client_ids[array_rand($client_ids, 1)]["id"];
+
+        shuffle($client_ids_copy);
+        $id_klienta = array_pop($client_ids_copy)["id"];
 
         $stmt = $mysqli->prepare("INSERT INTO wypozyczenia(id_auta,id_klienta,data_wypozyczenia) VALUES (?,?,?)");
         $stmt2 = $mysqli->prepare("UPDATE flota SET dostepny=0 WHERE id=?");

@@ -1,5 +1,7 @@
 <?php
 require(dirname(__FILE__) . "/" . "./includes/session.php");
+include_once(dirname(__FILE__) . "/" . "./includes/auth.php");
+requireAuth();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,9 +20,6 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
     require("navbar.php");
 
     ?>
-
-
-
     <div class="transparent_background">
         <div class="offer">
             <form action="" method="get">
@@ -30,8 +29,10 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
                     <option value="100">100</option>
                     <option value="150">150</option>
                     <option value="200">200</option>
+                    <option value="500">500</option>
+
                 </select>
-                <input type="text" name="q" id="q" placeholder="Wyszukaj po ID,marce,modelu lub kolorze">
+                <input type="text" name="q" id="q" placeholder="Imię,nazwisko, marka lub model">
 
                 <input type="submit" value="Filtruj">
             </form>
@@ -42,25 +43,33 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
 
                 <?php
                 require(dirname(__FILE__) . "/" . "./includes/db.php");
+                $sql =
+                    "SELECT wypozyczenia.id,wypozyczenia.id_klienta,wypozyczenia.id_auta,
+                    klienci.imie,klienci.nazwisko,
+                    flota.marka,flota.model,
+                    wypozyczenia.data_wypozyczenia,wypozyczenia.data_zwrotu
+                    FROM wypozyczenia
+                    JOIN klienci ON klienci.id = wypozyczenia.id_klienta
+                    JOIN flota on flota.id = wypozyczenia.id_auta
+                    ORDER BY wypozyczenia.id";
 
 
-
-                if (!isset($_GET['limit']) || !is_numeric($_GET['limit']) || intval($_GET['limit']) <= 0 || intval($_GET['limit']) > 200)
+                if (!isset($_GET['limit']) || !is_numeric($_GET['limit']) || intval($_GET['limit']) <= 0 || intval($_GET['limit']) > 600)
                     $limit = 25;
                 else
                     $limit = mysqli_real_escape_string($mysqli, intval($_GET['limit']));
 
 
                 if (!isset($_GET["q"]) || $_GET["q"] == "") {
-                    $sql = "SELECT * FROM flota LIMIT ?";
-                    $stmt = $mysqli->prepare($sql);
+                    $sql_q = "$sql LIMIT ?";
+                    $stmt = $mysqli->prepare($sql_q);
                     $stmt->bind_param("i", $limit);
                 } else {
                     $query = mysqli_real_escape_string($mysqli, $_GET["q"]);
-                    $sql = "SELECT * FROM flota  WHERE LOWER(marka) LIKE ? OR LOWER(model) LIKE ? OR LOWER(kolor) LIKE ? OR id=? LIMIT ?";
-                    $stmt = $mysqli->prepare($sql);
+                    $sql_q = "$sql WHERE LOWER(flota.marka) LIKE ? OR LOWER(flota.model) LIKE ? OR LOWER(klienci.imie) LIKE ? OR LOWER(klienci.nazwisko) LIKE ? LIMIT ?";
+                    $stmt = $mysqli->prepare($sql_q);
                     $param = "%" . strtolower($query) . "%";
-                    $stmt->bind_param("sssii", $param, $param, $param, $query, $limit);
+                    $stmt->bind_param("sssi", $param, $param, $param, $param, $limit);
                 }
 
 
@@ -75,37 +84,37 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
 
                 echo "<table id=\"offerTable\" cellspacing=\"0\">";
                 echo "<thead><tr>
-                <td id='id'>ID</td>
+                <td id='id'>ID wypożyczenia</td>
+                <td id='imie'>Imię</td>
+                <td id='nazwisko'>Nazwisko</td>
                 <td id='marka'>Marka</td>
                 <td id='model'>Model</td>
-                <td id='rocznik'>Rocznik</td>
-                <td id='kolor'>Kolor</td>
-                <td id='przebieg'>Przebieg [Km]</td>
-                <td id='moc'>Moc [km]</td>
-                <td id='dostepny'>Dostępny?</td>
+                <td id='data_wypozyczenia'>Data wypożyczenia</td>
+                <td id='data_zwrotu'>Data zwrotu</td>
                 </tr></thead>";
 
                 echo "<tbody>";
-                foreach ($data as &$auto) {
+                foreach ($data as &$wypozyczenie) {
                     echo "<tr>";
-                    $id = htmlspecialchars($auto["id"]);
-                    $marka = htmlspecialchars($auto["marka"]);
-                    $model = htmlspecialchars($auto["model"]);
-                    $rocznik = htmlspecialchars($auto["rocznik"]);
-                    $kolor = htmlspecialchars($auto["kolor"]);
-                    $przebieg = htmlspecialchars($auto["przebieg"]);
-                    $moc_km = htmlspecialchars($auto["moc_km"]);
-                    $dostepnosc = ($auto["dostepny"] == 1) ? "<div style=\"color:green;\">Tak</div>" : "<div style=\"color:red;\">Nie</div>";
+                    $id = htmlspecialchars($wypozyczenie["id"]);
+                    $imie = htmlspecialchars($wypozyczenie["imie"]);
+                    $nazwisko = htmlspecialchars($wypozyczenie["nazwisko"]);
+                    $id_klienta = htmlspecialchars($wypozyczenie["id_klienta"]);
+                    $marka = htmlspecialchars($wypozyczenie["marka"]);
+                    $model = htmlspecialchars($wypozyczenie["model"]);
+                    $id_auta = htmlspecialchars($wypozyczenie["id_auta"]);
+
+                    $data_wypozyczenia = htmlspecialchars($wypozyczenie["data_wypozyczenia"]);
+                    $data_zwrotu = htmlspecialchars($wypozyczenie["data_zwrotu"]);
 
 
                     echo "<td>$id</td>";
-                    echo "<td>$marka</td>";
-                    echo "<td>$model</td>";
-                    echo "<td>$rocznik</td>";
-                    echo "<td>$kolor</td>";
-                    echo "<td>$przebieg</td>";
-                    echo "<td>$moc_km</td>";
-                    echo "<td>$dostepnosc</td>";
+                    echo "<td><a href=\"client_details.php?id=$id_klienta\">$imie</a></td>";
+                    echo "<td><a href=\"client_details.php?id=$id_klienta\">$nazwisko</a></td>";
+                    echo "<td><a href=\"client_details.php?id=$id_auta\">$marka</a></td>";
+                    echo "<td><a href=\"client_details.php?id=$id_auta\">$model</a></td>";
+                    echo "<td>$data_wypozyczenia</td>";
+                    echo "<td>$data_zwrotu</td>";
                     echo "</tr>";
                 }
                 echo "</tbody>";
