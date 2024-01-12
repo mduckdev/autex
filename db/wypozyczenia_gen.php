@@ -34,6 +34,8 @@ function wypozyczenia_gen()
         //echo "Koniec: " . date("d.m.Y H:i", $end_date_timestamp) . " <br>";
     }
     $cars_ids_copy = $cars_ids;
+    $client_ids_copy = $client_ids;
+
     for ($i = 0; $i < 150; $i++) {
         shuffle($cars_ids_copy);
         $id_auta = array_pop($cars_ids_copy)["id"];

@@ -80,8 +80,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 if (!isset($_GET['unreturned']) || $_GET['unreturned'] != "on")
                     $showUnreturned = null;
                 else
-                    $showUnreturned = mysqli_real_escape_string($mysqli, intval($_GET['unreturned']));
-
+                    $showUnreturned = mysqli_real_escape_string($mysqli, ($_GET['unreturned']));
 
 
                 if ($id_a && $id_k) { // jest podane id auta oraz id klienta
@@ -92,7 +91,10 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     $stmt->bind_param("ii", $id_a, $id_k);
                 } else if ($id_a && !$id_k) { //jest podane id auta ale nie id klienta
                     $id_a = mysqli_real_escape_string($mysqli, $_GET["id_a"]);
-                    $sql_q = "$sql WHERE id_auta=?";
+                    if ($showUnreturned)
+                        $sql_q = "$sql WHERE id_auta=? AND data_zwrotu IS NULL";
+                    else
+                        $sql_q = "$sql WHERE id_auta=?";
                     $stmt = $mysqli->prepare($sql_q);
                     $stmt->bind_param("i", $id_a);
                 } else if (!$id_a && $id_k) { //jest podane id klienta ale nie id auta

@@ -91,6 +91,8 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 <td id='nr_tel'>Nr. telefonu</td>
                 <td id='email'>Adres e-mail</td>
                 <td id='data_ur'>Data urodzenia</td>
+                <td id='opcje'>Opcje</td>
+
                 </tr></thead>";
 
                 echo "<tbody>";
@@ -110,6 +112,8 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     echo "<td>$nr_tel</td>";
                     echo "<td>$email</td>";
                     echo "<td>$data_ur</td>";
+                    echo "<td><a href=\"rents.php?id_k=$id\">Historia wypożyczeń</a></td>";
+
                     echo "</tr>";
                 }
                 echo "</tbody>";

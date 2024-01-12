@@ -17,7 +17,7 @@ function klienci_gen()
 
     $stmt = $mysqli->prepare("INSERT INTO klienci(imie,nazwisko,nr_tel,email,data_ur) VALUES (?,?,?,?,?)");
 
-    for ($i = 0; $i < 500; $i++) {
+    for ($i = 0; $i < 250; $i++) {
         $imie = mysqli_real_escape_string($mysqli, $imiona[array_rand($imiona)]);
         $nazwisko = mysqli_real_escape_string($mysqli, $nazwiska[array_rand($nazwiska)]);
         $nr_tel = mysqli_real_escape_string($mysqli, "48" . random_int(100000000, 999999999));
