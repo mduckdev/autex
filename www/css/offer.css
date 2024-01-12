@@ -3,64 +3,79 @@
     overflow-y: scroll;
 }
 
-#offerTable{
+#offerTable {
     position: sticky;
     top: 0;
     width: 100%;
 }
 
-#offerTable thead{
+#offerTable thead {
     position: sticky;
-    top:0;
+    top: 0;
     background-color: black;
-    color:white;
-}
-#offerTable thead td{
-    cursor: pointer;
-transition: 250ms;
-}
-#offerTable thead td:hover{
-    color:yellow;
+    color: white;
 }
 
-#offerTable td{
+#offerTable thead td {
+    cursor: pointer;
+    transition: 250ms;
+}
+
+#offerTable thead td:hover {
+    color: yellow;
+}
+
+#offerTable td {
     padding: 10px;
 }
-#offerTable tbody tr:nth-child(even){
-    background-color: rgba(255, 255, 255,0.95);
-    color:black;
-}
-#offerTable tbody tr:nth-child(odd){
-    background-color: rgba(255, 255, 255,0.85);
-    color:black;
+
+table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: black;
 }
 
+table tbody tr:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.85);
+    color: black;
+}
 
 
-form{
+
+form {
     display: flex;
     align-items: baseline;
     justify-content: center;
     gap: 10px;
     padding: 10px;
 }
-form input#q{
+
+form input[type=text] {
     border: 0;
-    background:transparent;
+    background: transparent;
     border-bottom: 2px solid white;
-    color:white;
+    color: white;
     transition: 250ms;
 }
-form input#q:focus{
+
+form input[type=text]:focus {
     outline: none;
     border-bottom: 2px solid yellow;
 }
-form input::placeholder{
+
+form input::placeholder {
     font-size: 115%;
 }
 
 
-form input[type=submit]{
+form input[type=submit] {
     padding: 3px;
     cursor: pointer;
+}
+
+.redText {
+    color: red;
+}
+
+.greenText {
+    color: green;
 }

@@ -2,6 +2,8 @@
 require(dirname(__FILE__) . "/" . "./includes/session.php");
 include_once(dirname(__FILE__) . "/" . "./includes/auth.php");
 requireAuth();
+require(dirname(__FILE__) . "/" . "./includes/csp.php");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,9 +11,11 @@ requireAuth();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="./img/car.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/offer.css">
+    <script defer src="./js/search.js"></script>
+
     <title>Wypożyczalnia samochodów autex</title>
 </head>
 
@@ -32,8 +36,12 @@ requireAuth();
                     <option value="500">500</option>
 
                 </select>
+                <input type="text" name="id_a" id="id_a" placeholder="ID auta">
+
                 <input type="text" name="q" id="q" placeholder="Imię,nazwisko, marka lub model">
 
+                <input type="text" name="id_k" id="id_k" placeholder="ID klienta">
+                Niezwrócone <input type="checkbox" name="unreturned" id="unreturned">
                 <input type="submit" value="Filtruj">
             </form>
 
@@ -51,30 +59,71 @@ requireAuth();
                     FROM wypozyczenia
                     JOIN klienci ON klienci.id = wypozyczenia.id_klienta
                     JOIN flota on flota.id = wypozyczenia.id_auta
-                    ORDER BY wypozyczenia.id";
+                    ";
 
 
-                if (!isset($_GET['limit']) || !is_numeric($_GET['limit']) || intval($_GET['limit']) <= 0 || intval($_GET['limit']) > 600)
+                if (!isset($_GET['limit']) || !is_numeric($_GET['limit']) || intval($_GET['limit']) <= 0)
                     $limit = 25;
                 else
                     $limit = mysqli_real_escape_string($mysqli, intval($_GET['limit']));
 
+                if (!isset($_GET['id_a']) || !is_numeric($_GET['id_a']) || intval($_GET['id_a']) <= 0)
+                    $id_a = null;
+                else
+                    $id_a = mysqli_real_escape_string($mysqli, intval($_GET['id_a']));
 
-                if (!isset($_GET["q"]) || $_GET["q"] == "") {
-                    $sql_q = "$sql LIMIT ?";
+                if (!isset($_GET['id_k']) || !is_numeric($_GET['id_k']) || intval($_GET['id_k']) <= 0)
+                    $id_k = null;
+                else
+                    $id_k = mysqli_real_escape_string($mysqli, intval($_GET['id_k']));
+
+                if (!isset($_GET['unreturned']) || $_GET['unreturned'] != "on")
+                    $showUnreturned = null;
+                else
+                    $showUnreturned = mysqli_real_escape_string($mysqli, intval($_GET['unreturned']));
+
+
+
+                if ($id_a && $id_k) { // jest podane id auta oraz id klienta
+                    $id_a = mysqli_real_escape_string($mysqli, $_GET["id_a"]);
+                    $id_k = mysqli_real_escape_string($mysqli, $_GET["id_k"]);
+                    $sql_q = "$sql WHERE id_auta=? AND id_klienta=?";
                     $stmt = $mysqli->prepare($sql_q);
-                    $stmt->bind_param("i", $limit);
-                } else {
-                    $query = mysqli_real_escape_string($mysqli, $_GET["q"]);
-                    $sql_q = "$sql WHERE LOWER(flota.marka) LIKE ? OR LOWER(flota.model) LIKE ? OR LOWER(klienci.imie) LIKE ? OR LOWER(klienci.nazwisko) LIKE ? LIMIT ?";
+                    $stmt->bind_param("ii", $id_a, $id_k);
+                } else if ($id_a && !$id_k) { //jest podane id auta ale nie id klienta
+                    $id_a = mysqli_real_escape_string($mysqli, $_GET["id_a"]);
+                    $sql_q = "$sql WHERE id_auta=?";
                     $stmt = $mysqli->prepare($sql_q);
-                    $param = "%" . strtolower($query) . "%";
-                    $stmt->bind_param("sssi", $param, $param, $param, $param, $limit);
+                    $stmt->bind_param("i", $id_a);
+                } else if (!$id_a && $id_k) { //jest podane id klienta ale nie id auta
+                    $id_k = mysqli_real_escape_string($mysqli, $_GET["id_k"]);
+                    if ($showUnreturned)
+                        $sql_q = "$sql WHERE id_klienta=? AND data_zwrotu IS NULL";
+                    else
+                        $sql_q = "$sql WHERE id_klienta=?";
+                    $stmt = $mysqli->prepare($sql_q);
+                    $stmt->bind_param("i", $id_k);
+                } else { //nie zostało podane id klienta ani id auta więc wyszukiwane jest po zapytaniu zwyklym q
+                    if (!isset($_GET["q"]) || $_GET["q"] == "") { //nie ma zapytania
+                        if ($showUnreturned)
+                            $sql_q = "$sql WHERE data_zwrotu IS NULL ORDER BY id LIMIT ?";
+                        else
+                            $sql_q = "$sql ORDER BY wypozyczenia.id LIMIT ?";
+                        $stmt = $mysqli->prepare($sql_q);
+                        $stmt->bind_param("i", $limit);
+                    } else {
+                        $query = mysqli_real_escape_string($mysqli, $_GET["q"]);
+                        if ($showUnreturned)
+                            $sql_q = "$sql WHERE data_zwrotu IS NULL AND (LOWER(flota.marka) LIKE ? OR LOWER(flota.model) LIKE ? OR LOWER(klienci.imie) LIKE ? OR LOWER(klienci.nazwisko) LIKE ?) ORDER BY wypozyczenia.id LIMIT ?";
+                        else
+                            $sql_q = "$sql WHERE LOWER(flota.marka) LIKE ? OR LOWER(flota.model) LIKE ? OR LOWER(klienci.imie) LIKE ? OR LOWER(klienci.nazwisko) LIKE ? ORDER BY wypozyczenia.id LIMIT ?";
+                        $stmt = $mysqli->prepare($sql_q);
+                        $param = "%" . strtolower($query) . "%";
+                        $stmt->bind_param("ssssi", $param, $param, $param, $param, $limit);
+                    }
                 }
 
-
                 $stmt->execute();
-
                 $results = $stmt->get_result();
                 $data = $results->fetch_all(MYSQLI_ASSOC);
 
@@ -109,10 +158,10 @@ requireAuth();
 
 
                     echo "<td>$id</td>";
-                    echo "<td><a href=\"client_details.php?id=$id_klienta\">$imie</a></td>";
-                    echo "<td><a href=\"client_details.php?id=$id_klienta\">$nazwisko</a></td>";
-                    echo "<td><a href=\"client_details.php?id=$id_auta\">$marka</a></td>";
-                    echo "<td><a href=\"client_details.php?id=$id_auta\">$model</a></td>";
+                    echo "<td><a href=\"clients.php?q=$id_klienta\">$imie</a></td>";
+                    echo "<td><a href=\"clients.php?q=$id_klienta\">$nazwisko</a></td>";
+                    echo "<td><a href=\"offer.php?q=$id_auta\">$marka</a></td>";
+                    echo "<td><a href=\"offer.php?q=$id_auta\">$model</a></td>";
                     echo "<td>$data_wypozyczenia</td>";
                     echo "<td>$data_zwrotu</td>";
                     echo "</tr>";
@@ -126,90 +175,7 @@ requireAuth();
 
         </div>
     </div>
-    <script>
-        const input = document.getElementById("q");
-        input.setAttribute('size', input.getAttribute('placeholder').length);
 
-
-        sortTable = (index, order) => {
-            const rows = Array.from(document.querySelectorAll("table#offerTable tbody tr"));
-            const tbody = document.querySelector("table#offerTable tbody");
-            let return1 = (order == "asc") ? -1 : 1;
-            let return2 = (order == "asc") ? 1 : -1;
-
-            rows.sort((a, b) => {
-                let aCompare = a.childNodes[index].innerText;
-                let bCompare = b.childNodes[index].innerText
-
-                if (!isNaN(aCompare) && !isNaN(bCompare)) {
-                    aCompare = Number(aCompare);
-                    bCompare = Number(bCompare);
-                }
-
-
-                if (aCompare < bCompare)
-                    return return1;
-                if (aCompare > bCompare)
-                    return return2;
-                return 0;
-            });
-
-            tbody.innerHTML = "";
-
-            rows.forEach(item => {
-                tbody.appendChild(item);
-
-            })
-
-
-
-        }
-
-
-        sort = (e) => {
-            if (e) {
-                const headers = document.querySelectorAll("table thead td");
-                const clickedItem = e.target;
-                const asc = "(ros.)";
-                const desc = "(mal.)";
-
-                const indexOfClickedItem = Array.prototype.indexOf.call(headers, clickedItem)
-
-                headers.forEach(header => {
-                    if (header == clickedItem) {
-                        return;
-                    }
-                    header.innerText = header.innerText.replace(asc, "");
-                    header.innerText = header.innerText.replace(desc, "");
-                })
-
-                if (!clickedItem.innerText.includes(asc) && !clickedItem.innerText.includes(desc)) {
-                    clickedItem.innerText += ` ${asc}`;
-                    sortTable(indexOfClickedItem, "asc");
-                    return;
-                }
-                if (clickedItem.innerText.includes(asc)) {
-                    clickedItem.innerText = clickedItem.innerText.replace(asc, "");
-                    clickedItem.innerText += ` ${desc}`;
-                    sortTable(indexOfClickedItem, "desc");
-                    return;
-                }
-                if (clickedItem.innerText.includes(desc)) {
-                    clickedItem.innerText = clickedItem.innerText.replace(desc, "");
-                    clickedItem.innerText += ` ${asc}`;
-                    sortTable(indexOfClickedItem, "asc");
-                    return;
-                }
-            }
-
-
-
-        }
-
-        document.querySelectorAll("table thead td").forEach((item) => {
-            item.addEventListener("click", sort);
-        })
-    </script>
 </body>
 
 </html>

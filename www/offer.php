@@ -1,5 +1,8 @@
 <?php
 require(dirname(__FILE__) . "/" . "./includes/session.php");
+require(dirname(__FILE__) . "/" . "./includes/csp.php");
+include_once(dirname(__FILE__) . "/" . "./includes/auth.php");
+requireAuth();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,9 +10,11 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="./img/car.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/offer.css">
+    <script defer src="./js/search.js"></script>
+
     <title>Wypożyczalnia samochodów autex</title>
 </head>
 
@@ -18,8 +23,6 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
     require("navbar.php");
 
     ?>
-
-
 
     <div class="transparent_background">
         <div class="offer">
@@ -31,7 +34,7 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
                     <option value="150">150</option>
                     <option value="200">200</option>
                 </select>
-                <input type="text" name="q" id="q" placeholder="Wyszukaj po ID,marce,modelu lub kolorze">
+                <input type="text" name="q" id="q" placeholder="Wyszukaj po ID,marce,modelu,kolorze lub nr rejestracyjnym">
 
                 <input type="submit" value="Filtruj">
             </form>
@@ -57,21 +60,30 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
                     $stmt->bind_param("i", $limit);
                 } else {
                     $query = mysqli_real_escape_string($mysqli, $_GET["q"]);
-                    $sql = "SELECT * FROM flota  WHERE LOWER(marka) LIKE ? OR LOWER(model) LIKE ? OR LOWER(kolor) LIKE ? OR id=? LIMIT ?";
+                    $sql = "SELECT * FROM flota  WHERE id=? LIMIT ?";
                     $stmt = $mysqli->prepare($sql);
-                    $param = "%" . strtolower($query) . "%";
-                    $stmt->bind_param("sssii", $param, $param, $param, $query, $limit);
+                    $stmt->bind_param("ii", $query, $limit);
                 }
 
 
                 $stmt->execute();
-
                 $results = $stmt->get_result();
                 $data = $results->fetch_all(MYSQLI_ASSOC);
-
                 if (count($data) == 0) {
-                    echo ("Brak wyników wyszukiwań.");
+                    $query = mysqli_real_escape_string($mysqli, $_GET["q"]);
+                    $sql = "SELECT * FROM flota  WHERE LOWER(marka) LIKE ? OR LOWER(model) LIKE ? OR LOWER(kolor) LIKE ? OR nr_rej=? LIMIT ?";
+                    $stmt = $mysqli->prepare($sql);
+                    $param = "%" . strtolower($query) . "%";
+                    $stmt->bind_param("ssssi",  $param, $param, $param, $query, $limit);
+                    $stmt->execute();
+                    $results = $stmt->get_result();
+                    $data = $results->fetch_all(MYSQLI_ASSOC);
+                    if (count($data) == 0) {
+                        echo ("Brak wyników wyszukiwań.");
+                    }
                 }
+
+
 
                 echo "<table id=\"offerTable\" cellspacing=\"0\">";
                 echo "<thead><tr>
@@ -83,6 +95,9 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
                 <td id='przebieg'>Przebieg [Km]</td>
                 <td id='moc'>Moc [km]</td>
                 <td id='dostepny'>Dostępny?</td>
+                <td id='nr_rej'>Numer rejestracyjny</td>
+                <td id='cena'>Cena [za dzień]</td>
+                <td>Opcje</td>
                 </tr></thead>";
 
                 echo "<tbody>";
@@ -95,8 +110,9 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
                     $kolor = htmlspecialchars($auto["kolor"]);
                     $przebieg = htmlspecialchars($auto["przebieg"]);
                     $moc_km = htmlspecialchars($auto["moc_km"]);
-                    $dostepnosc = ($auto["dostepny"] == 1) ? "<div style=\"color:green;\">Tak</div>" : "<div style=\"color:red;\">Nie</div>";
-
+                    $dostepnosc = ($auto["dostepny"] == 1) ? "<div class=\"greenText\">Tak</div>" : "<div class=\"redText\">Nie</div>";
+                    $nr_rej = htmlspecialchars($auto["nr_rej"]);
+                    $cena = htmlspecialchars($auto["cena"]);
 
                     echo "<td>$id</td>";
                     echo "<td>$marka</td>";
@@ -106,6 +122,9 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
                     echo "<td>$przebieg</td>";
                     echo "<td>$moc_km</td>";
                     echo "<td>$dostepnosc</td>";
+                    echo "<td>$nr_rej</td>";
+                    echo "<td>$cena ZŁ</td>";
+                    echo "<td><a href=\"rents.php?id_a=$id\">Historia wypożyczeń</a></td>";
                     echo "</tr>";
                 }
                 echo "</tbody>";
@@ -117,90 +136,8 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
 
         </div>
     </div>
-    <script>
-        const input = document.getElementById("q");
-        input.setAttribute('size', input.getAttribute('placeholder').length);
 
 
-        sortTable = (index, order) => {
-            const rows = Array.from(document.querySelectorAll("table#offerTable tbody tr"));
-            const tbody = document.querySelector("table#offerTable tbody");
-            let return1 = (order == "asc") ? -1 : 1;
-            let return2 = (order == "asc") ? 1 : -1;
-
-            rows.sort((a, b) => {
-                let aCompare = a.childNodes[index].innerText;
-                let bCompare = b.childNodes[index].innerText
-
-                if (!isNaN(aCompare) && !isNaN(bCompare)) {
-                    aCompare = Number(aCompare);
-                    bCompare = Number(bCompare);
-                }
-
-
-                if (aCompare < bCompare)
-                    return return1;
-                if (aCompare > bCompare)
-                    return return2;
-                return 0;
-            });
-
-            tbody.innerHTML = "";
-
-            rows.forEach(item => {
-                tbody.appendChild(item);
-
-            })
-
-
-
-        }
-
-
-        sort = (e) => {
-            if (e) {
-                const headers = document.querySelectorAll("table thead td");
-                const clickedItem = e.target;
-                const asc = "(ros.)";
-                const desc = "(mal.)";
-
-                const indexOfClickedItem = Array.prototype.indexOf.call(headers, clickedItem)
-
-                headers.forEach(header => {
-                    if (header == clickedItem) {
-                        return;
-                    }
-                    header.innerText = header.innerText.replace(asc, "");
-                    header.innerText = header.innerText.replace(desc, "");
-                })
-
-                if (!clickedItem.innerText.includes(asc) && !clickedItem.innerText.includes(desc)) {
-                    clickedItem.innerText += ` ${asc}`;
-                    sortTable(indexOfClickedItem, "asc");
-                    return;
-                }
-                if (clickedItem.innerText.includes(asc)) {
-                    clickedItem.innerText = clickedItem.innerText.replace(asc, "");
-                    clickedItem.innerText += ` ${desc}`;
-                    sortTable(indexOfClickedItem, "desc");
-                    return;
-                }
-                if (clickedItem.innerText.includes(desc)) {
-                    clickedItem.innerText = clickedItem.innerText.replace(desc, "");
-                    clickedItem.innerText += ` ${asc}`;
-                    sortTable(indexOfClickedItem, "asc");
-                    return;
-                }
-            }
-
-
-
-        }
-
-        document.querySelectorAll("table thead td").forEach((item) => {
-            item.addEventListener("click", sort);
-        })
-    </script>
 </body>
 
 </html>

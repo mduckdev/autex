@@ -1,5 +1,7 @@
 <?php
 require(dirname(__FILE__) . "/" . "../www/includes/session.php");
+require(dirname(__FILE__) . "/" . "./includes/csp.php");
+
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +13,9 @@ require(dirname(__FILE__) . "/" . "../www/includes/session.php");
     <title>Autex - logowanie</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/login.css">
-    <script src="https://kit.fontawesome.com/258f783889.js" crossorigin="anonymous"></script>
+
+
+
 </head>
 
 <body>
@@ -23,8 +27,8 @@ require(dirname(__FILE__) . "/" . "../www/includes/session.php");
     <div id="formContainer">
         <form action="" method="post">
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-            <input type="text" name="username" id="username" placeholder="&#xf2c0; Nazwa użytkownika" style="font-family:Arial, FontAwesome">
-            <input type="password" name="password" id="password" placeholder="&#xf023; Hasło" style="font-family:Arial, FontAwesome">
+            <input type="text" name="username" id="username" placeholder="&#61447; Nazwa użytkownika">
+            <input type="password" name="password" id="password" placeholder="&#61475; Hasło">
             <a href="register.php">Nie masz konta?</a>
             <input type="submit" value="Zaloguj">
             <div id="info">

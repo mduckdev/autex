@@ -1,9 +1,12 @@
-#formContainer{
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
+
+#formContainer {
     background-color: rgba(0, 0, 0, 0.8);
     width: 100vw;
     height: 100vh;
     padding: 30px;
 }
+
 form {
     background-color: white;
     padding: 75px 35px 75px 35px;
@@ -16,41 +19,51 @@ form {
     text-align: center;
     border-radius: 25px;
 }
-form input[type=text],form input[type=password]{
+
+form input[type=text],
+form input[type=password] {
+    font-family: Arial, FontAwesome;
     border: 0;
     border-bottom: 2px solid black;
     transition: 250ms;
 }
-form input[type=text]:focus,form input[type=password]:focus{
+
+form input[type=text]:focus,
+form input[type=password]:focus {
+    font-family: Arial, FontAwesome;
     outline: none;
     border-bottom: 2px solid yellow;
 }
 
-form input[type=text]::placeholder,form input[type=password]::placeholder{
+form input[type=text]::placeholder,
+form input[type=password]::placeholder {
     font-size: 130%;
 }
 
-form a{
+form a {
     text-decoration: none;
-    color:black;
+    color: black;
 }
-form a:hover{
+
+form a:hover {
     text-decoration: underline;
 }
-form input[type=submit]{
+
+form input[type=submit] {
     padding: 15px;
     background-color: black;
-    color:white;
+    color: white;
     border: none;
     border-radius: 100px;
     transition: 250ms;
 }
-form input[type=submit]:hover{
-    color:yellow;
+
+form input[type=submit]:hover {
+    color: yellow;
     cursor: pointer;
 }
 
-#info p{
-    color:rgb(192, 12, 12);
-    text-decoration:underline;
+#info p {
+    color: rgb(192, 12, 12);
+    text-decoration: underline;
 }

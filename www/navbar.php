@@ -1,7 +1,7 @@
 <?php
 require(dirname(__FILE__) . "/" . "../www/includes/session.php");
-
 include_once(dirname(__FILE__) . "/" . "../www/includes/auth.php");
+require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
 ?>
 
@@ -17,6 +17,9 @@ include_once(dirname(__FILE__) . "/" . "../www/includes/auth.php");
         <a href="#">Wypożycz samochód</a>
         <a href="#">Zwróć samochód</a>
         <a href="rents.php">Wypożyczenia</a>
+        <a href="clients.php">Klienci</a>
+        <a href="offer.php">Samochody</a>
+
 
         <?php
         if (isLoggedIn()) {
