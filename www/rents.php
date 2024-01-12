@@ -158,6 +158,10 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     $data_wypozyczenia = htmlspecialchars($wypozyczenie["data_wypozyczenia"]);
                     $data_zwrotu = htmlspecialchars($wypozyczenie["data_zwrotu"]);
 
+                    if ($data_zwrotu == "") {
+                        $data_zwrotu = "<a href=\"return.php?id=$id\">Zwróć samochód</a>";
+                    }
+
 
                     echo "<td>$id</td>";
                     echo "<td><a href=\"clients.php?q=$id_klienta\">$imie</a></td>";
