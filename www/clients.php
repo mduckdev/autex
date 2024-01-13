@@ -27,11 +27,11 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
     <div class="transparent_background">
         <div class="offer">
             <form action="" method="get">
-                <input type="hidden" name="rent" value="<?php 
-                if (!isset($_GET['rent']) )
-                    echo"off";
+                <input type="hidden" name="rent" value="<?php
+                if (!isset($_GET['rent']))
+                    echo "off";
                 else
-                    echo"on";
+                    echo "on";
                 ?>">
                 <select name="limit" id="limit">
                     <option value="25">25</option>
@@ -89,10 +89,10 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     $data = $results->fetch_all(MYSQLI_ASSOC);
                 }
 
-                if (isset($_GET['rent']) )
-                    $col="<td>Wybierz klienta który chce wypożyczyć</td>";
+                if (isset($_GET['rent']))
+                    $col = "<td>Wybierz klienta który chce wypożyczyć</td>";
                 else
-                    $col="";
+                    $col = "";
 
                 echo "<table id=\"offerTable\" cellspacing=\"0\">";
                 echo "<thead><tr>
@@ -116,10 +116,10 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     $email = htmlspecialchars($klient["email"]);
                     $data_ur = htmlspecialchars($klient["data_ur"]);
 
-                    if (isset($_GET['rent']) )
-                        $col="<td><a href=\"offer.php?id_k=$id&rent=on\">Wybierz</a></td>";
+                    if (isset($_GET['rent']))
+                        $col = "<td><a href=\"offer.php?id_k=$id&rent=on&onlyavailable=on\">Wybierz</a></td>";
                     else
-                        $col="";
+                        $col = "";
 
 
                     echo "<td>$id</td>";

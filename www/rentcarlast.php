@@ -46,6 +46,8 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             }
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                require(dirname(__FILE__) . "/" . "./includes/csrf.php");
+
                 if (!isValidCSRF()) {
                     return;
                 }
@@ -74,7 +76,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 WHERE klienci.id = ?
                 ";
             $stmt = $mysqli->prepare($sql);
-            $stmt->bind_param("ii", $id_a,$id_k);
+            $stmt->bind_param("ii", $id_a, $id_k);
             $stmt->execute();
             $results = $stmt->get_result();
             $data = $results->fetch_all(MYSQLI_ASSOC);
@@ -83,23 +85,22 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 return;
             }
             $rent_data = $data[0];
-            if($_SERVER["REQUEST_METHOD"] == "POST")
-            {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $sql =
-                "INSERT INTO wypozyczenia(data_wypozyczenia,id_klienta,id_auta) VALUES (?,?,?)";
+                    "INSERT INTO wypozyczenia(data_wypozyczenia,id_klienta,id_auta) VALUES (?,?,?)";
                 $start_date = date("Y-m-d", time());
 
 
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("sii", $data_zwrotu, $id_k, $id_a);
+                $stmt->bind_param("sii", $start_date, $id_k, $id_a);
                 $stmt->execute();
-                
+
                 $sql = "UPDATE flota
                 SET dostepny = 0
                 WHERE id = ? ";
 
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("i",  $id_a);
+                $stmt->bind_param("i", $id_a);
                 $stmt->execute();
                 header("Location: /autex/www/index.php");
             }
@@ -118,7 +119,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             $nr_rej = htmlspecialchars($rent_data["nr_rej"]);
             $rocznik = htmlspecialchars($rent_data["rocznik"]);
 
-            $data_wypozyczenia = htmlspecialchars($rent_data["data_wypozyczenia"]);
+            $data_wypozyczenia = date("Y-m-d", time());
             $cena = htmlspecialchars($rent_data["cena"]);
 
             $csrf = $_SESSION["csrf_token"];
@@ -126,7 +127,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             $id_k = htmlspecialchars($id_k);
 
             echo ("<div class=\"summary-container\">
-                <h1>Podsumowanie Zwrotu Samochodu</h1>
+                <h1>Podsumowanie Wypożyczenia Samochodu</h1>
                 <hr>
                 <div class=\"section-header\">Dane Klienta</div>
                 <div class=\"section-content\">
@@ -159,7 +160,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                         <input type=\"hidden\" value=\"$id_k\" name=\"id_k\">
                         <input type=\"hidden\" value=\"$id_a\" name=\"id_a\">
 
-                        <input type=\"submit\" value=\"Potwierdź zwrot\">
+                        <input type=\"submit\" value=\"Potwierdź wypożyczenie\">
                     <form>
                 </div>
             </div>");
@@ -174,4 +175,3 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 </body>
 
 </html>
-

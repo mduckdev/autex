@@ -27,12 +27,19 @@ requireAuth();
     <div class="transparent_background">
         <div class="offer">
             <form action="" method="get">
-            <input type="hidden" name="rent" value="<?php 
-                if (!isset($_GET['rent']) || $_GET["rent"] !="on" )
-                    echo"off";
+                <input type="hidden" name="rent" value="<?php
+                if (!isset($_GET['rent']) || $_GET["rent"] != "on")
+                    echo "off";
                 else
-                    echo"on";
+                    echo "on";
                 ?>">
+                <?php
+                if (isset($_GET['id_k']) && is_numeric($_GET['id_k'])) {
+                    $id_k = htmlspecialchars($_GET['id_k']);
+                    echo ("<input type=\"hidden\" name=\"id_k\" value=\"$id_k\">");
+                }
+                ?>
+
                 <select name="limit" id="limit">
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -40,8 +47,13 @@ requireAuth();
                     <option value="150">150</option>
                     <option value="200">200</option>
                 </select>
-                <input type="text" name="q" id="q" placeholder="Wyszukaj po ID,marce,modelu,kolorze lub nr rejestracyjnym">
-                Tylko dostępne <input type="checkbox" name="onlyavailable" id="onlyavailable">
+                <input type="text" name="q" id="q"
+                    placeholder="Wyszukaj po ID,marce,modelu,kolorze lub nr rejestracyjnym">
+                Tylko dostępne <input type="checkbox" name="onlyavailable" id="onlyavailable" <?php
+                if (isset($_GET['onlyavailable']) && $_GET['onlyavailable'] == "on") {
+                    echo ("checked=\"true\"");
+                }
+                ?>>
                 <input type="submit" value="Filtruj">
             </form>
 
@@ -89,14 +101,14 @@ requireAuth();
                 $data = $results->fetch_all(MYSQLI_ASSOC);
                 if (count($data) == 0) {
                     $query = mysqli_real_escape_string($mysqli, $_GET["q"]);
-                    $sql = "SELECT * FROM flota (WHERE LOWER(marka) LIKE ? OR LOWER(model) LIKE ? OR LOWER(kolor) LIKE ? OR nr_rej=?) ";
+                    $sql = "SELECT * FROM flota WHERE( LOWER(marka) LIKE ? OR LOWER(model) LIKE ? OR LOWER(kolor) LIKE ? OR nr_rej=?) ";
                     if ($onlyavailable)
                         $sql_q = "$sql AND dostepny = 1 LIMIT ?";
                     else
                         $sql_q = "$sql LIMIT ?";
                     $stmt = $mysqli->prepare($sql_q);
                     $param = "%" . strtolower($query) . "%";
-                    $stmt->bind_param("ssssi",  $param, $param, $param, $query, $limit);
+                    $stmt->bind_param("ssssi", $param, $param, $param, $query, $limit);
                     $stmt->execute();
                     $results = $stmt->get_result();
                     $data = $results->fetch_all(MYSQLI_ASSOC);
@@ -105,9 +117,9 @@ requireAuth();
                     }
                 }
                 if (isset($_GET['rent']) && $_GET['rent'] == "on")
-                    $col="<td>Wybierz auto do wypożyczenia</td>";
+                    $col = "<td>Wybierz auto do wypożyczenia</td>";
                 else
-                    $col="";
+                    $col = "";
 
 
                 echo "<table id=\"offerTable\" cellspacing=\"0\">";
@@ -140,14 +152,12 @@ requireAuth();
                     $nr_rej = htmlspecialchars($auto["nr_rej"]);
                     $cena = htmlspecialchars($auto["cena"]);
 
-                    if (isset($_GET['rent'])&&$_GET['rent'] == "on" && isset($_GET['id_k']) && is_numeric($_GET['id_k']) ){
-                        $id_k=htmlspecialchars($_GET['id_k']);
+                    if (isset($_GET['rent']) && $_GET['rent'] == "on" && isset($_GET['id_k']) && is_numeric($_GET['id_k'])) {
+                        $id_k = htmlspecialchars($_GET['id_k']);
+                        $col = "<td><a href=\"rentcarlast.php?id_a=$id&id_k=$id_k\">Wybierz</a></td>";
 
-                        $col="<td><a href=\"rentcarlast.php?id_a=$id&id_k=$id_k\">Wybierz</a></td>";
-
-                    }
-                    else{
-                        $col="";
+                    } else {
+                        $col = "";
                     }
 
 
