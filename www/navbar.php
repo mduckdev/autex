@@ -14,7 +14,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
     </a>
 
     <div id="navcontainer">
-        <a href="#">Wypożycz samochód</a>
+        <a href="clients.php?rent=on">Wypożycz samochód</a>
         <a href="rents.php?unreturned=on">Zwróć samochód</a>
         <a href="rents.php">Wypożyczenia</a>
         <a href="clients.php">Klienci</a>

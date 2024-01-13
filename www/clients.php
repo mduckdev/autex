@@ -27,6 +27,12 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
     <div class="transparent_background">
         <div class="offer">
             <form action="" method="get">
+                <input type="hidden" name="rent" value="<?php 
+                if (!isset($_GET['rent']) )
+                    echo"off";
+                else
+                    echo"on";
+                ?>">
                 <select name="limit" id="limit">
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -83,6 +89,11 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     $data = $results->fetch_all(MYSQLI_ASSOC);
                 }
 
+                if (isset($_GET['rent']) )
+                    $col="<td>Wybierz klienta który chce wypożyczyć</td>";
+                else
+                    $col="";
+
                 echo "<table id=\"offerTable\" cellspacing=\"0\">";
                 echo "<thead><tr>
                 <td id='id'>ID</td>
@@ -92,7 +103,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 <td id='email'>Adres e-mail</td>
                 <td id='data_ur'>Data urodzenia</td>
                 <td id='opcje'>Opcje</td>
-
+                $col
                 </tr></thead>";
 
                 echo "<tbody>";
@@ -105,6 +116,11 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     $email = htmlspecialchars($klient["email"]);
                     $data_ur = htmlspecialchars($klient["data_ur"]);
 
+                    if (isset($_GET['rent']) )
+                        $col="<td><a href=\"offer.php?id_k=$id&rent=on\">Wybierz</a></td>";
+                    else
+                        $col="";
+
 
                     echo "<td>$id</td>";
                     echo "<td>$imie</td>";
@@ -113,7 +129,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     echo "<td>$email</td>";
                     echo "<td>$data_ur</td>";
                     echo "<td><a href=\"rents.php?id_k=$id\">Historia wypożyczeń</a></td>";
-
+                    echo $col;
                     echo "</tr>";
                 }
                 echo "</tbody>";

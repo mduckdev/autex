@@ -31,35 +31,50 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
         <div class="offer">
             <?php
             require(dirname(__FILE__) . "/" . "./includes/db.php");
-            require(dirname(__FILE__) . "/" . "./includes/csrf.php");
 
-            if (!isset($_GET['id']) || !is_numeric($_GET['id']) || intval($_GET['id']) <= 0) {
-                echo ("Nie podano id wypożyczenia");
+            if (!isset($_GET['id_k']) || !is_numeric($_GET['id_k']) || intval($_GET['id_k']) <= 0) {
+                echo ("Nie podano id klienta");
                 return;
             } else {
-                $id = mysqli_real_escape_string($mysqli, intval($_GET['id']));
+                $id_k = mysqli_real_escape_string($mysqli, intval($_GET['id_k']));
             }
+            if (!isset($_GET['id_a']) || !is_numeric($_GET['id_a']) || intval($_GET['id_a']) <= 0) {
+                echo ("Nie podano id auta");
+                return;
+            } else {
+                $id_a = mysqli_real_escape_string($mysqli, intval($_GET['id_a']));
+            }
+
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                if (!isset($_POST['id']) || !is_numeric($_POST['id']) || intval($_POST['id']) <= 0 || !isValidCSRF()) {
-                    echo ("Nie podano id wypożyczenia");
+                if (!isValidCSRF()) {
+                    return;
+                }
+                if (!isset($_POST['id_k']) || !is_numeric($_POST['id_k']) || intval($_POST['id_k']) <= 0) {
+                    echo ("Nie podano id klienta");
                     return;
                 } else {
-                    $id = mysqli_real_escape_string($mysqli, intval($_POST['id']));
+                    $id_k = mysqli_real_escape_string($mysqli, intval($_POST['id_k']));
+                }
+                if (!isset($_POST['id_a']) || !is_numeric($_POST['id_a']) || intval($_POST['id_a']) <= 0) {
+                    echo ("Nie podano id auta");
+                    return;
+                } else {
+                    $id_a = mysqli_real_escape_string($mysqli, intval($_POST['id_a']));
                 }
             }
+
+
 
             $sql =
                 "SELECT
                 klienci.imie,klienci.nazwisko,klienci.nr_tel,klienci.email,
-                flota.marka,flota.model,flota.nr_rej,flota.rocznik,flota.cena,
-                wypozyczenia.data_wypozyczenia, wypozyczenia.id_auta
-                FROM wypozyczenia
-                JOIN klienci ON klienci.id = wypozyczenia.id_klienta
-                JOIN flota on flota.id = wypozyczenia.id_auta
-                WHERE wypozyczenia.id=?
+                flota.marka,flota.model,flota.nr_rej,flota.rocznik,flota.cena
+                FROM klienci
+                JOIN flota ON flota.id = ?
+                WHERE klienci.id = ?
                 ";
             $stmt = $mysqli->prepare($sql);
-            $stmt->bind_param("i", $id);
+            $stmt->bind_param("ii", $id_a,$id_k);
             $stmt->execute();
             $results = $stmt->get_result();
             $data = $results->fetch_all(MYSQLI_ASSOC);
@@ -67,55 +82,49 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 echo ("Nie ma takiego wypożyczenia.");
                 return;
             }
-            $wypozyczenie = $data[0];
-
+            $rent_data = $data[0];
             if($_SERVER["REQUEST_METHOD"] == "POST")
             {
-
                 $sql =
-                "UPDATE wypozyczenia
-                SET data_zwrotu = ?, cena = ?
-                WHERE id = ? ";
-                $data_wypozyczenia = htmlspecialchars($wypozyczenie["data_wypozyczenia"]);
-                $data_zwrotu = date("Y-m-d", time());
-                $cena = htmlspecialchars($wypozyczenie["cena"]);
-                $dni = (time() - strtotime($data_wypozyczenia)) / (60 * 60 * 24);
-                $cena_koncowa = ceil($cena * $dni);
+                "INSERT INTO wypozyczenia(data_wypozyczenia,id_klienta,id_auta) VALUES (?,?,?)";
+                $start_date = date("Y-m-d", time());
+
+
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("sii", $data_zwrotu, $cena_koncowa, $id);
+                $stmt->bind_param("sii", $data_zwrotu, $id_k, $id_a);
                 $stmt->execute();
+                
                 $sql = "UPDATE flota
-                SET dostepny = 1
+                SET dostepny = 0
                 WHERE id = ? ";
-                $id_auta = $wypozyczenie["id_auta"];
+
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("i",  $id_auta);
+                $stmt->bind_param("i",  $id_a);
                 $stmt->execute();
                 header("Location: /autex/www/index.php");
             }
 
-            $imie = htmlspecialchars($wypozyczenie["imie"]);
+            $imie = htmlspecialchars($rent_data["imie"]);
             $imie = ucfirst(strtolower($imie));
-            $nazwisko = htmlspecialchars($wypozyczenie["nazwisko"]);
+            $nazwisko = htmlspecialchars($rent_data["nazwisko"]);
             $nazwisko = ucfirst(strtolower($nazwisko));
-            $nr_tel = htmlspecialchars($wypozyczenie["nr_tel"]);
-            $email = htmlspecialchars($wypozyczenie["email"]);
+            $nr_tel = htmlspecialchars($rent_data["nr_tel"]);
+            $email = htmlspecialchars($rent_data["email"]);
 
 
 
-            $marka = htmlspecialchars($wypozyczenie["marka"]);
-            $model = htmlspecialchars($wypozyczenie["model"]);
-            $nr_rej = htmlspecialchars($wypozyczenie["nr_rej"]);
-            $rocznik = htmlspecialchars($wypozyczenie["rocznik"]);
+            $marka = htmlspecialchars($rent_data["marka"]);
+            $model = htmlspecialchars($rent_data["model"]);
+            $nr_rej = htmlspecialchars($rent_data["nr_rej"]);
+            $rocznik = htmlspecialchars($rent_data["rocznik"]);
 
-            $data_wypozyczenia = htmlspecialchars($wypozyczenie["data_wypozyczenia"]);
-            $data_zwrotu = date("Y-m-d", time());
-            $cena = htmlspecialchars($wypozyczenie["cena"]);
-            $dni = (time() - strtotime($data_wypozyczenia)) / (60 * 60 * 24);
-            $cena_koncowa = ceil($cena * $dni);
+            $data_wypozyczenia = htmlspecialchars($rent_data["data_wypozyczenia"]);
+            $cena = htmlspecialchars($rent_data["cena"]);
 
-            $csrf = $_SESSION['csrf_token'];
-            $id=htmlspecialchars($id);
+            $csrf = $_SESSION["csrf_token"];
+            $id_a = htmlspecialchars($id_a);
+            $id_k = htmlspecialchars($id_k);
+
             echo ("<div class=\"summary-container\">
                 <h1>Podsumowanie Zwrotu Samochodu</h1>
                 <hr>
@@ -140,8 +149,6 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 <div class=\"section-content\">
                     <p><strong>Cena Wypożyczenia za dzień:</strong> $cena</p>
                     <p><strong>Data Rozpoczęcia Wypożyczenia:</strong> $data_wypozyczenia</p>
-                    <p><strong>Data Zakończenia Wypożyczenia:</strong> $data_zwrotu</p>
-                    <p><strong>Cena Całkowita:</strong> $cena_koncowa ZŁ</p>
                 </div>
                 <hr>
 
@@ -149,7 +156,9 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     <button id=\"wroc\">Wróć </button>
                     <form action=\"\" method=\"POST\" id =\"returnForm\">
                         <input type=\"hidden\" value=\"$csrf\" name=\"csrf_token\">
-                        <input type=\"hidden\" value=\"$id\" name=\"id\">
+                        <input type=\"hidden\" value=\"$id_k\" name=\"id_k\">
+                        <input type=\"hidden\" value=\"$id_a\" name=\"id_a\">
+
                         <input type=\"submit\" value=\"Potwierdź zwrot\">
                     <form>
                 </div>
