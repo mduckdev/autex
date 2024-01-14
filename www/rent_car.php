@@ -155,7 +155,8 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
                 <div>
                     <button id=\"wroc\">Wróć </button>
-                    <form action=\"\" method=\"POST\" id =\"returnForm\">
+                    
+                    <form action=\"\" method=\"POST\" id =\"returnForm\" class=\"require-additional-confirm\">
                         <input type=\"hidden\" value=\"$csrf\" name=\"csrf_token\">
                         <input type=\"hidden\" value=\"$id_k\" name=\"id_k\">
                         <input type=\"hidden\" value=\"$id_a\" name=\"id_a\">

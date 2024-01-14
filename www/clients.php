@@ -15,6 +15,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/tables_search.css">
     <script defer src="./js/search.js"></script>
+    <script defer src="./js/delete.js"></script>
 
     <title>Wypożyczalnia samochodów autex</title>
 </head>
@@ -123,14 +124,26 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     else
                         $col = "";
 
-
+                    $csrf_token=$_SESSION["csrf_token"];
                     echo "<td>$id</td>";
                     echo "<td>$imie</td>";
                     echo "<td>$nazwisko</td>";
                     echo "<td>$nr_tel</td>";
                     echo "<td>$email</td>";
                     echo "<td>$data_ur</td>";
-                    echo "<td><a href=\"rents.php?id_k=$id\">Historia wypożyczeń</a></td>";
+                    echo "<td>
+                            <a href=\"rents.php?id_k=$id\">Historia wypożyczeń</a>
+                            <form action=\"\" method=\"POST\" class=\"require-additional-confirm edit-form\">
+                                <input type=\"hidden\" name=\"csrf_token\" value=\"$csrf_token\">
+                                <input type=\"hidden\" name=\"id\" value=\"$id\">
+                                <input class=\"edit-button\" type=\"submit\"value=\"EDYTUJ\">   
+                            </form>
+                            <form action=\"delete.php\" method=\"POST\" id=\"\" class=\"require-additional-confirm delete-form\">
+                                <input type=\"hidden\" name=\"csrf_token\" value=\"$csrf_token\">
+                                <input type=\"hidden\" name=\"id_k\" value=\"$id\">
+                                <input class=\"delete-button\" type=\"submit\"value=\"USUŃ\">   
+                            </form>
+                        </td>";
                     echo $col;
                     echo "</tr>";
                 }

@@ -14,6 +14,7 @@ requireAuth();
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/tables_search.css">
     <script defer src="./js/search.js"></script>
+    <script defer src="./js/delete.js"></script>
 
     <title>Wypożyczalnia samochodów autex</title>
 </head>
@@ -159,7 +160,8 @@ requireAuth();
                         $col = "";
                     }
 
-
+                    $csrf_token=$_SESSION['csrf_token'];
+                    
 
                     echo "<td>$id</td>";
                     echo "<td>$marka</td>";
@@ -171,7 +173,19 @@ requireAuth();
                     echo "<td>$dostepnosc</td>";
                     echo "<td>$nr_rej</td>";
                     echo "<td>$cena ZŁ</td>";
-                    echo "<td><a href=\"rents.php?id_a=$id\">Historia wypożyczeń</a></td>";
+                    echo "<td class=\"options\">
+                            <a href=\"rents.php?id_a=$id\">Historia wypożyczeń</a>
+                            <form action=\"\" method=\"POST\" class=\"require-additional-confirm edit-form\">
+                                <input type=\"hidden\" name=\"csrf_token\" value=\"$csrf_token\">
+                                <input type=\"hidden\" name=\"id\" value=\"$id\">
+                                <input class=\"edit-button\" type=\"submit\"value=\"EDYTUJ\">   
+                            </form>
+                            <form action=\"delete.php\" method=\"POST\" class=\"require-additional-confirm delete-form\">
+                                <input type=\"hidden\" name=\"csrf_token\" value=\"$csrf_token\">
+                                <input type=\"hidden\" name=\"id_a\" value=\"$id\">
+                                <input class=\"delete-button\" type=\"submit\"value=\"USUŃ\">   
+                            </form>
+                            </td>";
                     echo $col;
                     echo "</tr>";
                 }
