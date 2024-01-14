@@ -107,7 +107,7 @@ requireAuth();
                     else
                         $sql_q = "$sql LIMIT ?";
                     $stmt = $mysqli->prepare($sql_q);
-                    $param = "%" . strtolower($query) . "%";
+                    $param = "%" . mb_strtolower($query) . "%";
                     $stmt->bind_param("ssssi", $param, $param, $param, $query, $limit);
                     $stmt->execute();
                     $results = $stmt->get_result();

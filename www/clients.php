@@ -82,7 +82,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 if (count($data) == 0) {
                     $sql = "SELECT * FROM klienci WHERE LOWER(imie) LIKE ? OR LOWER(nazwisko) LIKE ? OR LOWER(nr_tel) LIKE ? OR LOWER(email) LIKE ?";
                     $stmt = $mysqli->prepare($sql);
-                    $param = "%" . strtolower($q) . "%";
+                    $param = "%" . mb_strtolower($q) . "%";
                     $stmt->bind_param("ssss", $param, $param, $param, $param);
                     $stmt->execute();
                     $results = $stmt->get_result();

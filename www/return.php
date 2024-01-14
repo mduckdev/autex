@@ -95,9 +95,9 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             }
 
             $imie = htmlspecialchars($wypozyczenie["imie"]);
-            $imie = ucfirst(strtolower($imie));
+            $imie = ucfirst(mb_strtolower($imie));
             $nazwisko = htmlspecialchars($wypozyczenie["nazwisko"]);
-            $nazwisko = ucfirst(strtolower($nazwisko));
+            $nazwisko = ucfirst(mb_strtolower($nazwisko));
             $nr_tel = htmlspecialchars($wypozyczenie["nr_tel"]);
             $email = htmlspecialchars($wypozyczenie["email"]);
 

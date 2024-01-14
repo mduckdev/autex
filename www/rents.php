@@ -124,7 +124,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                         else
                             $sql_q = "$sql WHERE LOWER(flota.marka) LIKE ? OR LOWER(flota.model) LIKE ? OR LOWER(klienci.imie) LIKE ? OR LOWER(klienci.nazwisko) LIKE ? ORDER BY wypozyczenia.id LIMIT ?";
                         $stmt = $mysqli->prepare($sql_q);
-                        $param = "%" . strtolower($query) . "%";
+                        $param = "%" . mb_strtolower($query) . "%";
                         $stmt->bind_param("ssssi", $param, $param, $param, $param, $limit);
                     }
                 }

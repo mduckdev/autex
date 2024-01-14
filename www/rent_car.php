@@ -106,9 +106,9 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             }
 
             $imie = htmlspecialchars($rent_data["imie"]);
-            $imie = ucfirst(strtolower($imie));
+            $imie = ucfirst(mb_strtolower($imie));
             $nazwisko = htmlspecialchars($rent_data["nazwisko"]);
-            $nazwisko = ucfirst(strtolower($nazwisko));
+            $nazwisko = ucfirst(mb_strtolower($nazwisko));
             $nr_tel = htmlspecialchars($rent_data["nr_tel"]);
             $email = htmlspecialchars($rent_data["email"]);
 
