@@ -5,30 +5,33 @@ function wypozyczenia_gen()
     require(dirname(__FILE__) . "/" . "../www/includes/db.php");
     mysqli_set_charset($mysqli, "utf8");
 
-    $cars_id_result = $mysqli->query("SELECT id FROM flota;");
+    $cars_id_result = $mysqli->query("SELECT id,cena FROM flota;");
     $cars_ids = $cars_id_result->fetch_all(MYSQLI_ASSOC);
 
     $client_id_result = $mysqli->query("SELECT id FROM klienci;");
     $client_ids = $client_id_result->fetch_all(MYSQLI_ASSOC);
 
 
-    $stmt = $mysqli->prepare("INSERT INTO wypozyczenia(id_auta,id_klienta,data_wypozyczenia,data_zwrotu) VALUES (?,?,?,?)");
+    $stmt = $mysqli->prepare("INSERT INTO wypozyczenia(id_auta,id_klienta,data_wypozyczenia,data_zwrotu,cena) VALUES (?,?,?,?,?)");
 
     $cars_ids_copy = $cars_ids;
     $client_ids_copy = $client_ids;
     for ($i = 0; $i < 150; $i++) {
         shuffle($cars_ids_copy);
-        $id_auta = array_pop($cars_ids_copy)["id"];
+        $auto=array_pop($cars_ids_copy);
+        $id_auta = $auto["id"];
+        $cena=$auto["cena"];
 
         shuffle($client_ids_copy);
         $id_klienta = array_pop($client_ids_copy)["id"];
-
         $start_date_timestamp = random_int(1641034364, 1672572602); // Sat Jan 01 2022-Sun Jan 01 2023
         $end_date_timestamp = random_int($start_date_timestamp + (86400 * 2), $start_date_timestamp + (86400 * 14));
-        $start_date = date("Y-m-d", $start_date_timestamp);
-        $end_date = date("Y-m-d", $end_date_timestamp);
+        $start_date = date("Y-m-d h:m:s", $start_date_timestamp);
+        $end_date = date("Y-m-d h:m:s", $end_date_timestamp);
+        $days = ($end_date_timestamp - $start_date_timestamp)/86400;
+        $cena_koncowa=$days*$cena;
 
-        $stmt->bind_param("iiss", $id_auta, $id_klienta, $start_date, $end_date);
+        $stmt->bind_param("iissi", $id_auta, $id_klienta, $start_date, $end_date,$cena_koncowa);
         $stmt->execute();
         //echo "ID auta:" . $id_auta["id"] . " ID klienta: " . $id_klienta["id"] . " Początek: " . date("d.m.Y H:i", $start_date_timestamp) . " <br>";
         //echo "Koniec: " . date("d.m.Y H:i", $end_date_timestamp) . " <br>";
@@ -38,7 +41,9 @@ function wypozyczenia_gen()
 
     for ($i = 0; $i < 150; $i++) {
         shuffle($cars_ids_copy);
-        $id_auta = array_pop($cars_ids_copy)["id"];
+        $auto=array_pop($cars_ids_copy);
+        $id_auta = $auto["id"];
+        $cena=$auto["cena"];
 
 
         shuffle($client_ids_copy);
@@ -48,9 +53,13 @@ function wypozyczenia_gen()
         $start_date_timestamp = random_int(1609498364, 1641034364); // Fri Jan 01 2023-Sat Jan 01 2022
         $end_date_timestamp = random_int($start_date_timestamp + (86400 * 2), $start_date_timestamp + (86400 * 14));
 
-        $start_date = date("Y-m-d", $start_date_timestamp);
-        $end_date = date("Y-m-d", $end_date_timestamp);
-        $stmt->bind_param("iiss", $id_auta, $id_klienta, $start_date, $end_date);
+        $start_date = date("Y-m-d h:m:s", $start_date_timestamp);
+        $end_date = date("Y-m-d h:m:s", $end_date_timestamp);
+
+        $days = ($end_date_timestamp - $start_date_timestamp)/86400;
+        $cena_koncowa=$days*$cena;
+
+        $stmt->bind_param("iissi", $id_auta, $id_klienta, $start_date, $end_date,$cena_koncowa);
 
         $stmt->execute();
         //echo "ID:" . $id["id"] . " Początek: " . date("d.m.Y H:i", $start_date_timestamp) . " <br>";
@@ -67,7 +76,7 @@ function wypozyczenia_gen()
 
         $current_date = time();
         $start_date_timestamp = random_int($current_date - (86400 * 6), $current_date);
-        $start_date = date("Y-m-d", $start_date_timestamp);
+        $start_date = date("Y-m-d h:m:s", $start_date_timestamp);
 
         shuffle($client_ids_copy);
         $id_klienta = array_pop($client_ids_copy)["id"];

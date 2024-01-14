@@ -154,7 +154,7 @@ requireAuth();
 
                     if (isset($_GET['rent']) && $_GET['rent'] == "on" && isset($_GET['id_k']) && is_numeric($_GET['id_k'])) {
                         $id_k = htmlspecialchars($_GET['id_k']);
-                        $col = "<td><a href=\"rentcarlast.php?id_a=$id&id_k=$id_k\">Wybierz</a></td>";
+                        $col = "<td><a href=\"rent_car.php?id_a=$id&id_k=$id_k\">Wybierz</a></td>";
 
                     } else {
                         $col = "";

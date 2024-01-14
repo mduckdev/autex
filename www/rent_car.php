@@ -73,7 +73,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 flota.marka,flota.model,flota.nr_rej,flota.rocznik,flota.cena
                 FROM klienci
                 JOIN flota ON flota.id = ?
-                WHERE klienci.id = ?
+                WHERE klienci.id = ? AND flota.dostepny=1
                 ";
             $stmt = $mysqli->prepare($sql);
             $stmt->bind_param("ii", $id_a, $id_k);
@@ -88,7 +88,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $sql =
                     "INSERT INTO wypozyczenia(data_wypozyczenia,id_klienta,id_auta) VALUES (?,?,?)";
-                $start_date = date("Y-m-d", time());
+                $start_date = date("Y-m-d h:m:s", time());
 
 
                 $stmt = $mysqli->prepare($sql);
@@ -119,7 +119,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             $nr_rej = htmlspecialchars($rent_data["nr_rej"]);
             $rocznik = htmlspecialchars($rent_data["rocznik"]);
 
-            $data_wypozyczenia = date("Y-m-d", time());
+            $data_wypozyczenia = date("Y-m-d h:m:s", time());
             $cena = htmlspecialchars($rent_data["cena"]);
 
             $csrf = $_SESSION["csrf_token"];

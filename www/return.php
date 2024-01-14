@@ -56,7 +56,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 FROM wypozyczenia
                 JOIN klienci ON klienci.id = wypozyczenia.id_klienta
                 JOIN flota on flota.id = wypozyczenia.id_auta
-                WHERE wypozyczenia.id=?
+                WHERE wypozyczenia.id=? AND data_zwrotu IS NULL AND wypozyczenia.cena IS NULL
                 ";
             $stmt = $mysqli->prepare($sql);
             $stmt->bind_param("i", $id);
@@ -109,7 +109,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             $rocznik = htmlspecialchars($wypozyczenie["rocznik"]);
 
             $data_wypozyczenia = htmlspecialchars($wypozyczenie["data_wypozyczenia"]);
-            $data_zwrotu = date("Y-m-d", time());
+            $data_zwrotu = date("Y-m-d h:m:s", time());
             $cena = htmlspecialchars($wypozyczenie["cena"]);
             $dni = (time() - strtotime($data_wypozyczenia)) / (60 * 60 * 24);
             $cena_koncowa = ceil($cena * $dni);

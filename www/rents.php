@@ -41,7 +41,11 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 <input type="text" name="q" id="q" placeholder="Imię,nazwisko, marka lub model">
 
                 <input type="text" name="id_k" id="id_k" placeholder="ID klienta">
-                Niezwrócone <input type="checkbox" name="unreturned" id="unreturned">
+                Niezwrócone <input type="checkbox" name="unreturned" id="unreturned" <?php
+                if (isset($_GET['unreturned']) && $_GET['unreturned'] == "on") {
+                    echo ("checked=\"true\"");
+                }
+                ?>>
                 <input type="submit" value="Filtruj">
             </form>
 
@@ -55,7 +59,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     "SELECT wypozyczenia.id,wypozyczenia.id_klienta,wypozyczenia.id_auta,
                     klienci.imie,klienci.nazwisko,
                     flota.marka,flota.model,
-                    wypozyczenia.data_wypozyczenia,wypozyczenia.data_zwrotu
+                    wypozyczenia.data_wypozyczenia,wypozyczenia.data_zwrotu,wypozyczenia.cena
                     FROM wypozyczenia
                     JOIN klienci ON klienci.id = wypozyczenia.id_klienta
                     JOIN flota on flota.id = wypozyczenia.id_auta
@@ -142,6 +146,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 <td id='model'>Model</td>
                 <td id='data_wypozyczenia'>Data wypożyczenia</td>
                 <td id='data_zwrotu'>Data zwrotu</td>
+                <td id='data_zwrotu'>Cena wypożyczenia</td>
                 </tr></thead>";
 
                 echo "<tbody>";
@@ -157,6 +162,8 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
                     $data_wypozyczenia = htmlspecialchars($wypozyczenie["data_wypozyczenia"]);
                     $data_zwrotu = htmlspecialchars($wypozyczenie["data_zwrotu"]);
+                    $cena = htmlspecialchars($wypozyczenie["cena"]);
+
 
                     if ($data_zwrotu == "") {
                         $data_zwrotu = "<a href=\"return.php?id=$id\">Zwróć samochód</a>";
@@ -170,6 +177,8 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     echo "<td><a href=\"offer.php?q=$id_auta\">$model</a></td>";
                     echo "<td>$data_wypozyczenia</td>";
                     echo "<td>$data_zwrotu</td>";
+                    echo "<td>$cena ZŁ</td>";
+
                     echo "</tr>";
                 }
                 echo "</tbody>";
