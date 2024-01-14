@@ -21,7 +21,8 @@ form {
 }
 
 form input[type=text],
-form input[type=password] {
+form input[type=password], 
+form input[type=tel]{
     font-family: Arial, FontAwesome;
     border: 0;
     border-bottom: 2px solid black;
@@ -29,14 +30,16 @@ form input[type=password] {
 }
 
 form input[type=text]:focus,
-form input[type=password]:focus {
+form input[type=password]:focus,
+form input[type=tel]:focus {
     font-family: Arial, FontAwesome;
     outline: none;
     border-bottom: 2px solid yellow;
 }
 
 form input[type=text]::placeholder,
-form input[type=password]::placeholder {
+form input[type=password]::placeholder,
+form input[type=tel]::placeholder {
     font-size: 130%;
 }
 

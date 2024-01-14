@@ -102,9 +102,9 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 
-                $sql = "INSERT INTO uzytkownicy(nazwa_uzytkownika,haslo,imie,nazwisko) VALUES (?,?,?,?)";
+                $sql = "INSERT INTO uzytkownicy(nazwa_uzytkownika,haslo) VALUES (?,?)";
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("ssss", $username, $passwordHash, $firstName, $lastName);
+                $stmt->bind_param("ss", $username, $passwordHash);
                 $stmt->execute();
                 header("Location: login.php");
 

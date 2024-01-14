@@ -13,7 +13,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/offer.css">
+    <link rel="stylesheet" href="./css/tables_search.css">
     <link rel="stylesheet" href="./css/return.css">
 
     <script defer src="./js/search.js"></script>
@@ -28,7 +28,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
     ?>
     <div class="transparent_background">
-        <div class="offer">
+        <div>
             <?php
             require(dirname(__FILE__) . "/" . "./includes/db.php");
 

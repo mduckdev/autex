@@ -13,7 +13,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/offer.css">
+    <link rel="stylesheet" href="./css/tables_search.css">
     <script defer src="./js/search.js"></script>
 
     <title>Wypożyczalnia samochodów autex</title>
@@ -25,7 +25,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
     ?>
     <div class="transparent_background">
-        <div class="offer">
+        <div class="search_bar">
             <form action="" method="get">
                 <select name="limit" id="limit">
                     <option value="25">25</option>
@@ -48,6 +48,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 ?>>
                 <input type="submit" value="Filtruj">
             </form>
+            </div>
 
 
             <div class="tableContainer">
@@ -188,7 +189,6 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 ?>
             </div>
 
-        </div>
     </div>
 
 </body>

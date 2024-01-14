@@ -23,7 +23,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
         <?php
         if (isLoggedIn()) {
-            echo ("<a href=\"account.php\">Konto</a>");
+            #echo ("<a href=\"account.php\">Konto</a>");
             echo ("<a href=\"logout.php\" id=\"last_item\">Wyloguj</a>");
         } else {
             echo ("<a href=\"login.php\" id=\"last_item\">Logowanie | Rejestracja</a>");
