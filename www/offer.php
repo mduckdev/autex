@@ -56,7 +56,7 @@ requireAuth();
                 ?>>
                 <input type="submit" value="Filtruj">
             </form>
-
+            <a href="add_car.php"><button id="add_button">Dodaj nowy samochód</button></a>
             </div>
 
             <div class="tableContainer">
@@ -64,8 +64,6 @@ requireAuth();
 
                 <?php
                 require(dirname(__FILE__) . "/" . "./includes/db.php");
-
-
 
                 if (!isset($_GET['limit']) || !is_numeric($_GET['limit']) || intval($_GET['limit']) <= 0 || intval($_GET['limit']) > 200)
                     $limit = 25;

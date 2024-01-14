@@ -13,7 +13,6 @@ requireAuth();
     <title>Autex</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/login.css">
-    <script src="https://kit.fontawesome.com/258f783889.js" crossorigin="anonymous"></script>
 
 </head>
 
