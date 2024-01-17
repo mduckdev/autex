@@ -32,7 +32,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             <?php
             require(dirname(__FILE__) . "/" . "./includes/db.php");
 
-            if (!isset($_GET['id_k']) || !is_numeric($_GET['id_k']) || intval($_GET['id_k']) <= 0) {
+            if (!isset($_GET['id_k']) || !is_numeric($_GET['id_k']) || intval($_GET['id_k']) <= 0) { // sprawdzanie czy podano id klienta i id auta
                 echo ("Nie podano id klienta");
                 return;
             } else {
@@ -51,7 +51,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 if (!isValidCSRF()) {
                     return;
                 }
-                if (!isset($_POST['id_k']) || !is_numeric($_POST['id_k']) || intval($_POST['id_k']) <= 0) {
+                if (!isset($_POST['id_k']) || !is_numeric($_POST['id_k']) || intval($_POST['id_k']) <= 0) { // sprawdzenie czy podano, ale przy przesłaniu formularza z potwierdzeniem wynajmu
                     echo ("Nie podano id klienta");
                     return;
                 } else {
@@ -81,13 +81,13 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             $results = $stmt->get_result();
             $data = $results->fetch_all(MYSQLI_ASSOC);
             if (count($data) == 0) {
-                echo ("Nie ma takiego wypożyczenia.");
+                echo ("Nie ma takiego wypożyczenia."); // sprawdzanie czy istnieje klient o podanym id oraz auto o podanym id, oraz czy jest dostępne
                 return;
             }
             $rent_data = $data[0];
-            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") { //metoda post oznacza że potwierdzono wypożyczenie i przesłano formularz
                 $sql =
-                    "INSERT INTO wypozyczenia(data_wypozyczenia,id_klienta,id_auta) VALUES (?,?,?)";
+                    "INSERT INTO wypozyczenia(data_wypozyczenia,id_klienta,id_auta) VALUES (?,?,?)"; // dodawanie nowego wypozyczenia do bazy
                 $start_date = date("Y-m-d h:m:s", time());
 
 
@@ -97,13 +97,14 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
                 $sql = "UPDATE flota
                 SET dostepny = 0
-                WHERE id = ? ";
+                WHERE id = ? "; //zmiana statusu auta
 
                 $stmt = $mysqli->prepare($sql);
                 $stmt->bind_param("i", $id_a);
                 $stmt->execute();
-                header("Location: /autex/www/index.php");
+                header("Location: /autex/www/index.php"); // przekierowanie
             }
+            //jeśli nie była to metoda post to wyświetlane jest podsumowanie z wypożyczeniem
 
             $imie = htmlspecialchars($rent_data["imie"]);
             $imie = ucfirst(mb_strtolower($imie));
@@ -165,7 +166,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     <form>
                 </div>
             </div>");
-
+            // na samym dole jest przycisk z powrotem oraz formularz potwierdzający wynajem
 
 
             ?>

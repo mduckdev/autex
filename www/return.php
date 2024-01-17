@@ -33,14 +33,14 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             require(dirname(__FILE__) . "/" . "./includes/db.php");
             require(dirname(__FILE__) . "/" . "./includes/csrf.php");
 
-            if (!isset($_GET['id']) || !is_numeric($_GET['id']) || intval($_GET['id']) <= 0) {
+            if (!isset($_GET['id']) || !is_numeric($_GET['id']) || intval($_GET['id']) <= 0) { //sprawdzanie czy podano niezbędne parametry
                 echo ("Nie podano id wypożyczenia");
                 return;
             } else {
                 $id = mysqli_real_escape_string($mysqli, intval($_GET['id']));
             }
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                if (!isset($_POST['id']) || !is_numeric($_POST['id']) || intval($_POST['id']) <= 0 || !isValidCSRF()) {
+                if (!isset($_POST['id']) || !is_numeric($_POST['id']) || intval($_POST['id']) <= 0 || !isValidCSRF()) { //sprawdzanie czy podano niezbędne parametry po potwierdzeniu zwrotu
                     echo ("Nie podano id wypożyczenia");
                     return;
                 } else {
@@ -57,43 +57,41 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 JOIN klienci ON klienci.id = wypozyczenia.id_klienta
                 JOIN flota on flota.id = wypozyczenia.id_auta
                 WHERE wypozyczenia.id=? AND data_zwrotu IS NULL AND wypozyczenia.cena IS NULL
-                ";
+                "; // zapytanie do wyszukania danych o wypożyczeniu
             $stmt = $mysqli->prepare($sql);
             $stmt->bind_param("i", $id);
             $stmt->execute();
             $results = $stmt->get_result();
             $data = $results->fetch_all(MYSQLI_ASSOC);
-            if (count($data) == 0) {
+            if (count($data) == 0) { //złe id
                 echo ("Nie ma takiego wypożyczenia.");
                 return;
             }
             $wypozyczenie = $data[0];
 
-            if($_SERVER["REQUEST_METHOD"] == "POST")
-            {
-
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $sql =
-                "UPDATE wypozyczenia
+                    "UPDATE wypozyczenia
                 SET data_zwrotu = ?, cena = ?
-                WHERE id = ? ";
+                WHERE id = ? "; // akutalizacja rekordu wypożyczenia o cenę i datę zwrotu
                 $data_wypozyczenia = htmlspecialchars($wypozyczenie["data_wypozyczenia"]);
-                $data_zwrotu = date("Y-m-d", time());
+                $data_zwrotu = date("Y-m-d", time()); //dzisiejsza data
                 $cena = htmlspecialchars($wypozyczenie["cena"]);
-                $dni = (time() - strtotime($data_wypozyczenia)) / (60 * 60 * 24);
-                $cena_koncowa = ceil($cena * $dni);
+                $dni = (time() - strtotime($data_wypozyczenia)) / (60 * 60 * 24); // ile dni upłynęło od wypożyczenia
+                $cena_koncowa = ceil($cena * $dni); //cena wypożyczenia
                 $stmt = $mysqli->prepare($sql);
                 $stmt->bind_param("sii", $data_zwrotu, $cena_koncowa, $id);
                 $stmt->execute();
                 $sql = "UPDATE flota
                 SET dostepny = 1
-                WHERE id = ? ";
+                WHERE id = ? "; // zmiana statusu auta na z powrotem dostępne
                 $id_auta = $wypozyczenie["id_auta"];
                 $stmt = $mysqli->prepare($sql);
                 $stmt->bind_param("i",  $id_auta);
                 $stmt->execute();
                 header("Location: /autex/www/index.php");
             }
-
+            //jeśli jednak nie był to formularz to wyświetlane jest podsumowanie
             $imie = htmlspecialchars($wypozyczenie["imie"]);
             $imie = ucfirst(mb_strtolower($imie));
             $nazwisko = htmlspecialchars($wypozyczenie["nazwisko"]);
@@ -115,7 +113,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             $cena_koncowa = ceil($cena * $dni);
 
             $csrf = $_SESSION['csrf_token'];
-            $id=htmlspecialchars($id);
+            $id = htmlspecialchars($id); //podsumowanie
             echo ("<div class=\"summary-container\">
                 <h1>Podsumowanie Zwrotu Samochodu</h1>
                 <hr>
@@ -154,7 +152,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     <form>
                 </div>
             </div>");
-
+            //formularz z potwierdzeniem  przesłania
 
 
             ?>
@@ -165,4 +163,3 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 </body>
 
 </html>
-

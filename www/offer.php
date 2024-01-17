@@ -27,15 +27,15 @@ requireAuth();
 
     <div class="transparent_background">
         <div class="search_bar">
-            <form action="" method="get">
-                <input type="hidden" name="rent" value="<?php
+            <form action="" method="get"> <!-- formularz wyszukiwania samochodów -->
+                <input type="hidden" name="rent" value="<?php //sprawdza czy tryb wynajmu jest włączony i ustawia go tak jak był
                                                         if (!isset($_GET['rent']) || $_GET["rent"] != "on")
                                                             echo "off";
                                                         else
                                                             echo "on";
                                                         ?>">
                 <?php
-                if (isset($_GET['id_k']) && is_numeric($_GET['id_k'])) {
+                if (isset($_GET['id_k']) && is_numeric($_GET['id_k'])) { // sprawdza czy jest w parametrze get id klienta (jest jeśli został wybrany do wynajmu i umieszcza go w ukrytym inpucie)
                     $id_k = htmlspecialchars($_GET['id_k']);
                     echo ("<input type=\"hidden\" name=\"id_k\" value=\"$id_k\">");
                 }
@@ -49,14 +49,14 @@ requireAuth();
                     <option value="200">200</option>
                 </select>
                 <input type="text" name="q" id="q" placeholder="Wyszukaj po ID,marce,modelu,kolorze lub nr rejestracyjnym">
-                Tylko dostępne <input type="checkbox" name="onlyavailable" id="onlyavailable" <?php
+                Tylko dostępne <input type="checkbox" name="onlyavailable" id="onlyavailable" <?php //zapamietywanie tego czy filtr tylko dostępnych był ustawiony
                                                                                                 if (isset($_GET['onlyavailable']) && $_GET['onlyavailable'] == "on") {
                                                                                                     echo ("checked=\"true\"");
                                                                                                 }
                                                                                                 ?>>
                 <input type="submit" value="Filtruj">
             </form>
-            <a href="add_car.php"><button id="add_button">Dodaj nowy samochód</button></a>
+            <a href="add_car.php"><button id="add_button">Dodaj nowy samochód</button></a> <!-- przycisk dodawania nowego samochodu -->
         </div>
 
         <div class="tableContainer">
@@ -75,18 +75,18 @@ requireAuth();
             else
                 $onlyavailable = mysqli_real_escape_string($mysqli, ($_GET['onlyavailable']));
 
-            if (!isset($_GET["q"]) || $_GET["q"] == "") {
+            if (!isset($_GET["q"]) || $_GET["q"] == "") { //jeśli nie wyszukiwane jest nic
                 $sql = "SELECT * FROM flota";
-                if ($onlyavailable)
+                if ($onlyavailable) //jeśli dodatkowo został włączony filtr dostępnych aut (dostępne auta mają pole dostepny ustawione na 1)
                     $sql_q = "$sql WHERE dostepny = 1 LIMIT ?";
                 else
                     $sql_q = "$sql LIMIT ?";
                 $stmt = $mysqli->prepare($sql_q);
                 $stmt->bind_param("i", $limit);
-            } else {
+            } else { // tutaj wiemy że q jest ustawione i ktoś coś wyszukał
                 $query = mysqli_real_escape_string($mysqli, $_GET["q"]);
-                $sql = "SELECT * FROM flota  WHERE id=?";
-                if ($onlyavailable)
+                $sql = "SELECT * FROM flota  WHERE id=?"; // podobnie jak wyszukując klientów najpierw stara się znaleźć po id auta
+                if ($onlyavailable) // filtr dostępnych
                     $sql_q = "$sql AND dostepny = 1 LIMIT ?";
                 else
                     $sql_q = "$sql LIMIT ?";
@@ -98,7 +98,7 @@ requireAuth();
             $stmt->execute();
             $results = $stmt->get_result();
             $data = $results->fetch_all(MYSQLI_ASSOC);
-            if (count($data) == 0) {
+            if (count($data) == 0) { // jeśli jednak q to nie było id auta, wyszukiwane jest według innych parametrów
                 $query = mysqli_real_escape_string($mysqli, $_GET["q"]);
                 $sql = "SELECT * FROM flota WHERE( LOWER(marka) LIKE ? OR LOWER(model) LIKE ? OR LOWER(kolor) LIKE ? OR nr_rej=?) ";
                 if ($onlyavailable)
@@ -111,11 +111,11 @@ requireAuth();
                 $stmt->execute();
                 $results = $stmt->get_result();
                 $data = $results->fetch_all(MYSQLI_ASSOC);
-                if (count($data) == 0) {
+                if (count($data) == 0) { // komunikat że nic nie znaleziono
                     echo ("Brak wyników wyszukiwań.");
                 }
             }
-            if (isset($_GET['rent']) && $_GET['rent'] == "on")
+            if (isset($_GET['rent']) && $_GET['rent'] == "on") // możliwość wybrania auta do wypożyczenia jeśli włączony jest tryb wynajmu
                 $col = "<td>Wybierz auto do wypożyczenia</td>";
             else
                 $col = "";
@@ -138,7 +138,7 @@ requireAuth();
                 </tr></thead>";
 
             echo "<tbody>";
-            foreach ($data as &$auto) {
+            foreach ($data as &$auto) { //wyświetlanie w tabeli wszystkich samochodów
                 echo "<tr>";
                 $id = htmlspecialchars($auto["id"]);
                 $marka = htmlspecialchars($auto["marka"]);
@@ -146,11 +146,11 @@ requireAuth();
                 $rocznik = htmlspecialchars($auto["rocznik"]);
                 $kolor = htmlspecialchars($auto["kolor"]);
                 $przebieg = htmlspecialchars($auto["przebieg"]);
-                $moc_km = htmlspecialchars($auto["moc_km"]);
+                $moc_km = htmlspecialchars($auto["moc_km"]); // zależnie czy auto jest dostępne czy nie to ma inny kolor czcionki
                 $dostepnosc = ($auto["dostepny"] == 1) ? "<div class=\"greenText\">Tak</div>" : "<div class=\"redText\">Nie</div>";
                 $nr_rej = htmlspecialchars($auto["nr_rej"]);
                 $cena = htmlspecialchars($auto["cena"]);
-
+                //tutaj sprawdzane jest, czy włączony jest tryb wynajmu i czy id klienta jest wybrane, jeśli tak to wyświetlany jest przycisk do wybrania auta do wynajmu
                 if (isset($_GET['rent']) && $_GET['rent'] == "on" && isset($_GET['id_k']) && is_numeric($_GET['id_k'])) {
                     $id_k = htmlspecialchars($_GET['id_k']);
                     $col = "<td><a href=\"rent_car.php?id_a=$id&id_k=$id_k\">Wybierz</a></td>";
@@ -170,7 +170,7 @@ requireAuth();
                 echo "<td>$moc_km</td>";
                 echo "<td>$dostepnosc</td>";
                 echo "<td>$nr_rej</td>";
-                echo "<td>$cena ZŁ</td>";
+                echo "<td>$cena ZŁ</td>"; // dane auta oraz historia wypożyczeń oraz formularz do usunięcia
                 echo "<td class=\"options\">
                             <a href=\"rents.php?id_a=$id\">Historia wypożyczeń</a>
                             

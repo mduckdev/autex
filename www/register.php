@@ -21,7 +21,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
     ?>
     <div id="formContainer">
-        <form action="" method="post">
+        <form action="" method="post"> <!-- formularz rejestracji -->
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
             <input type="text" name="firstName" id="firstName" placeholder="&#xf2c3; Imię (opcjonalnie)" style="font-family:Arial, FontAwesome">
             <input type="text" name="lastName" id="lastName" placeholder="&#xf2c3; Nazwisko (opcjonalnie)" style="font-family:Arial, FontAwesome">
@@ -61,17 +61,17 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     echo "<p>Hasło musi zawierać od 10 do 128 znaków.</p>";
                     $errors = true;
                 }
-                if ($_POST["password"] != $_POST["passwordRepeat"]) {
+                if ($_POST["password"] != $_POST["passwordRepeat"]) { //sprawdzane jest czy powtórzone hasło jest takie samo
                     echo "<p>Hasła się nie zgadzają.</p>";
                     $errors = true;
                 }
-                if ($errors) {
+                if ($errors) { //jeśli jakieś pola są błędne przerywany jest skrypt
                     return;
                 }
 
                 require(dirname(__FILE__) . "/" . "./includes/db.php");
 
-                if (!isset($_POST["firstName"]) || strlen($_POST["firstName"]) == 0) {
+                if (!isset($_POST["firstName"]) || strlen($_POST["firstName"]) == 0) { // imię i nazwisko jest opcjonalne 
                     $firstName = mysqli_real_escape_string($mysqli, $_POST["firstName"]);
                 } else {
                     $firstName = "NULL";
@@ -86,7 +86,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 $username = mysqli_real_escape_string($mysqli, $_POST["username"]);
                 $password = mysqli_real_escape_string($mysqli, $_POST["password"]);
 
-                $sql = "SELECT * FROM uzytkownicy WHERE nazwa_uzytkownika = ?";
+                $sql = "SELECT * FROM uzytkownicy WHERE nazwa_uzytkownika = ?"; // sprawdzanie czy nazwa użytkownika nie jest zajęta
                 $stmt = $mysqli->prepare($sql);
                 $stmt->bind_param("s", $username);
                 $stmt->execute();
@@ -98,14 +98,14 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     return;
                 }
 
-                $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+                $passwordHash = password_hash($password, PASSWORD_DEFAULT); // do bazy danych zapisywany jest hasz hasła
 
 
                 $sql = "INSERT INTO uzytkownicy(nazwa_uzytkownika,haslo) VALUES (?,?)";
                 $stmt = $mysqli->prepare($sql);
                 $stmt->bind_param("ss", $username, $passwordHash);
                 $stmt->execute();
-                header("Location: login.php");
+                header("Location: login.php"); // przekierowanie do formularza logowania
 
                 ?>
             </div>

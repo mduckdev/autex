@@ -20,7 +20,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
     ?>
 
-    <div class="transparent_background">
+    <div class="transparent_background"> <!-- strona startowa -->
         <p id="slogan">
             Twój czas, twój wybór, twój Autex!
         </p>
