@@ -2,7 +2,7 @@
 
 require("session.php");
 
-function isLoggedIn()
+function isLoggedIn() //funkcja do sprawdzenia czy użytkownik jest zalogowany
 {
     if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] != 1) {
         return false;
@@ -11,11 +11,10 @@ function isLoggedIn()
     }
 }
 
-function requireAuth()
+function requireAuth() // funkcja do wymuszenia zalogowania przez użytkownika
 {
     if (!(isLoggedIn())) {
         header("Location: /autex/www/login.php");
-        echo ("XD");
         die();
     }
 }
