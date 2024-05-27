@@ -71,13 +71,13 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
                 require(dirname(__FILE__) . "/" . "./includes/db.php");
 
-                if (!isset($_POST["firstName"]) || strlen($_POST["firstName"]) == 0) { // imię i nazwisko jest opcjonalne 
+                if (!isset($_POST["firstName"]) || strlen($_POST["firstName"]) != 0 || strlen($_POST["firstName"]) <= 50) { // imię i nazwisko jest opcjonalne 
                     $firstName = mysqli_real_escape_string($mysqli, $_POST["firstName"]);
                 } else {
                     $firstName = "NULL";
                 }
 
-                if (!isset($_POST["lastName"]) || strlen($_POST["lastName"]) == 0) {
+                if (!isset($_POST["lastName"]) || strlen($_POST["firstName"]) != 0 || strlen($_POST["firstName"]) <= 50) {
                     $lastName = mysqli_real_escape_string($mysqli, $_POST["lastName"]);
                 } else {
                     $lastName = "NULL";
