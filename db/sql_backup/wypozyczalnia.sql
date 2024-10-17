@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Jan 14, 2024 at 12:49 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: Paź 17, 2024 at 06:28 PM
+-- Wersja serwera: 10.4.32-MariaDB
+-- Wersja PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `flota`
+-- Struktura tabeli dla tabeli `flota`
 --
 
 CREATE TABLE `flota` (
@@ -249,7 +249,7 @@ INSERT INTO `flota` (`id`, `marka`, `model`, `rocznik`, `kolor`, `przebieg`, `mo
 -- --------------------------------------------------------
 
 --
--- Table structure for table `klienci`
+-- Struktura tabeli dla tabeli `klienci`
 --
 
 CREATE TABLE `klienci` (
@@ -515,35 +515,38 @@ INSERT INTO `klienci` (`id`, `imie`, `nazwisko`, `nr_tel`, `email`, `data_ur`) V
 (247, 'WOJCIECH', 'MERTA', 455924949, 'woj2803@gmail.com', '1984-07-14'),
 (248, 'WIESŁAW', 'KŁECZEK', 177884934, 'wie7784@gmail.com', '1970-10-27'),
 (249, 'SYLWESTER', 'SZYMAŃSKI', 306372267, 'syl6906@gmail.com', '1965-04-13'),
-(250, 'ANTONI', 'RUCKI', 400992068, 'ant4553@gmail.com', '1948-02-22');
+(250, 'ANTONI', 'RUCKI', 400992068, 'ant4553@gmail.com', '1948-02-22'),
+(251, '', '', NULL, 'test@test.com', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `uzytkownicy`
+-- Struktura tabeli dla tabeli `uzytkownicy`
 --
 
 CREATE TABLE `uzytkownicy` (
   `id` int(11) NOT NULL,
-  `nazwa_uzytkownika` varchar(20) NOT NULL,
+  `email` varchar(100) NOT NULL,
   `haslo` varchar(255) NOT NULL,
-  `imie` varchar(25) DEFAULT NULL,
-  `nazwisko` varchar(30) DEFAULT NULL,
-  `aktywne` tinyint(1) NOT NULL DEFAULT 0
+  `aktywne` tinyint(1) NOT NULL DEFAULT 0,
+  `pracownik` tinyint(1) NOT NULL,
+  `id_klienta` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
 
 --
 -- Dumping data for table `uzytkownicy`
 --
 
-INSERT INTO `uzytkownicy` (`id`, `nazwa_uzytkownika`, `haslo`, `imie`, `nazwisko`, `aktywne`) VALUES
-(1, 'admin', '$2a$10$F.Dt638GmBY8Eh6bxpiRT.U19D3ZIWe0hNnx/KL32yu/xYeLbFj0a', NULL, NULL, 1),
-(2, 'test', '$2a$10$KkhDLjo.pMQrJH5FGcUu2O4V2vzCUD/CnBcYm2L5Vn5wKCGmSxzc2', NULL, NULL, 1);
+INSERT INTO `uzytkownicy` (`id`, `email`, `haslo`, `aktywne`, `pracownik`, `id_klienta`) VALUES
+(1, 'admin@example.com', '$2a$10$F.Dt638GmBY8Eh6bxpiRT.U19D3ZIWe0hNnx/KL32yu/xYeLbFj0a', 1, 1, NULL),
+(2, 'test', '$2a$10$KkhDLjo.pMQrJH5FGcUu2O4V2vzCUD/CnBcYm2L5Vn5wKCGmSxzc2', 1, 1, 1),
+(5, 'jul1623@gmail.com', '$2y$10$tH/QkTkAVbW/qPRcFj32deucnMWCWZbBQI3PVXgQ1Dh2Cbm00BAFq', 0, 0, 3),
+(6, 'test@test.com', '$2y$10$sEIpDNOsDNH9poks9L7CueEE2nULVMjgL19gey9ZIoeJgVc.GtSUO', 0, 0, 251);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `wypozyczenia`
+-- Struktura tabeli dla tabeli `wypozyczenia`
 --
 
 CREATE TABLE `wypozyczenia` (
@@ -897,30 +900,31 @@ INSERT INTO `wypozyczenia` (`id`, `id_auta`, `id_klienta`, `data_wypozyczenia`, 
 (335, 52, 132, '2024-01-14 03:01:19', NULL, NULL);
 
 --
--- Indexes for dumped tables
+-- Indeksy dla zrzutów tabel
 --
 
 --
--- Indexes for table `flota`
+-- Indeksy dla tabeli `flota`
 --
 ALTER TABLE `flota`
   ADD PRIMARY KEY (`id`);
 ALTER TABLE `flota` ADD FULLTEXT KEY `marka` (`marka`,`model`,`kolor`);
 
 --
--- Indexes for table `klienci`
+-- Indeksy dla tabeli `klienci`
 --
 ALTER TABLE `klienci`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `uzytkownicy`
+-- Indeksy dla tabeli `uzytkownicy`
 --
 ALTER TABLE `uzytkownicy`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_klienta` (`id_klienta`);
 
 --
--- Indexes for table `wypozyczenia`
+-- Indeksy dla tabeli `wypozyczenia`
 --
 ALTER TABLE `wypozyczenia`
   ADD PRIMARY KEY (`id`),
@@ -941,13 +945,13 @@ ALTER TABLE `flota`
 -- AUTO_INCREMENT for table `klienci`
 --
 ALTER TABLE `klienci`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=251;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=252;
 
 --
 -- AUTO_INCREMENT for table `uzytkownicy`
 --
 ALTER TABLE `uzytkownicy`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `wypozyczenia`
@@ -958,6 +962,12 @@ ALTER TABLE `wypozyczenia`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `uzytkownicy`
+--
+ALTER TABLE `uzytkownicy`
+  ADD CONSTRAINT `uzytkownicy_ibfk_1` FOREIGN KEY (`id_klienta`) REFERENCES `klienci` (`id`);
 
 --
 -- Constraints for table `wypozyczenia`

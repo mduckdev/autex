@@ -14,7 +14,7 @@ VALID_PASSWORD = 'testpassword'
 
 
 
-def register(username, password,password_repeat, first_name=None, last_name=None):
+def register(email, password,password_repeat, first_name=None, last_name=None):
     # Pobierz token CSRF
     session = requests.Session()
     response = session.get(REGISTER_URL)
@@ -24,7 +24,7 @@ def register(username, password,password_repeat, first_name=None, last_name=None
     # Dane do przesłania w formularzu
     data = {
         'csrf_token': csrf_token,
-        'username': username,
+        'email': email,
         'password': password,
         'passwordRepeat': password_repeat,
         'firstName': first_name if first_name else '',
@@ -40,15 +40,15 @@ def test_register_success():
     # Sprawdź, czy rejestracja zakończyła się sukcesem
     assert response.url == 'http://localhost/autex/www/login.php'
 
-@pytest.mark.parametrize("username, password, password_repeat, first_name, last_name, expected_error", [
-    ('', VALID_PASSWORD,VALID_PASSWORD, None, None, 'Nazwa użytkownika musi zawierać od 1 do 20 znaków.'),
-    ('toolongusername1234567890', VALID_PASSWORD,VALID_PASSWORD, None, None, 'Nazwa użytkownika musi zawierać od 1 do 20 znaków.'),
+@pytest.mark.parametrize("email, password, password_repeat, first_name, last_name, expected_error", [
+    ('', VALID_PASSWORD,VALID_PASSWORD, None, None, 'Nieprawidłowy adres email.'),
+    ('toolongemail1234567890', VALID_PASSWORD,VALID_PASSWORD, None, None, 'Nieprawidłowy adres email.'),
     (VALID_USERNAME, '','', None, None, 'Hasło musi zawierać od 10 do 128 znaków.'),
     (VALID_USERNAME, 'short','short', None, None, 'Hasło musi zawierać od 10 do 128 znaków.'),
     (VALID_USERNAME, 'toolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpassword','toolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpasswordtoolongpassword', None, None, 'Hasło musi zawierać od 10 do 128 znaków.'),
     (VALID_USERNAME, VALID_PASSWORD,'incorrectpassword', None, None, 'Hasła się nie zgadzają.'),
 ])
-def test_register_invalid_input(username, password,password_repeat, first_name, last_name, expected_error):
-    response = register(username, password,password_repeat, first_name, last_name)
+def test_register_invalid_input(email, password,password_repeat, first_name, last_name, expected_error):
+    response = register(email, password,password_repeat, first_name, last_name)
     # Sprawdź, czy wyświetlany jest oczekiwany komunikat błędu
     assert expected_error in response.text

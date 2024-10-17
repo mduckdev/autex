@@ -23,13 +23,11 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
     <div id="formContainer">
         <form action="" method="post"> <!-- formularz rejestracji -->
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-            <input type="text" name="firstName" id="firstName" placeholder="&#xf2c3; Imię (opcjonalnie)" style="font-family:Arial, FontAwesome">
-            <input type="text" name="lastName" id="lastName" placeholder="&#xf2c3; Nazwisko (opcjonalnie)" style="font-family:Arial, FontAwesome">
-            <input type="text" name="username" id="username" placeholder="&#xf2c0; Nazwa użytkownika (1-20 znaków)" style="font-family:Arial, FontAwesome">
+            <input type="text" name="email" id="email" placeholder="&#61447; Adres e-mail" style="font-family:Arial, FontAwesome">
             <input type="password" name="password" id="password" placeholder="&#xf023; Hasło (10-128 znaków)" style="font-family:Arial, FontAwesome">
             <input type="password" name="passwordRepeat" id="passwordRepeat" placeholder="&#xf023; Powtórz hasło" style="font-family:Arial, FontAwesome">
             <a href="login.php">Masz już konto?</a>
-            <input type="submit" value="Zaloguj">
+            <input type="submit" value="Zarejestruj">
 
             <div id="info">
                 <?php
@@ -46,11 +44,13 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 $errors = false;
 
                 if (
-                    !isset($_POST["username"]) || $_POST["username"] == ""
-                    || strlen($_POST["username"]) > 20
-                    || strlen($_POST["username"]) < 1
+                    !isset($_POST["email"]) 
+                    || $_POST["email"] == ""
+                    || strlen($_POST["email"]) > 100
+                    || strlen($_POST["email"]) < 1
+                    || !filter_var($_POST["email"],FILTER_VALIDATE_EMAIL)
                 ) {
-                    echo "<p>Nazwa użytkownika musi zawierać od 1 do 20 znaków.</p>";
+                    echo "<p>Nieprawidłowy adres email.</p>";
                     $errors = true;
                 }
                 if (
@@ -71,40 +71,46 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
                 require(dirname(__FILE__) . "/" . "./includes/db.php");
 
-                if (!isset($_POST["firstName"]) || strlen($_POST["firstName"]) != 0 || strlen($_POST["firstName"]) <= 50) { // imię i nazwisko jest opcjonalne 
-                    $firstName = mysqli_real_escape_string($mysqli, $_POST["firstName"]);
-                } else {
-                    $firstName = "NULL";
-                }
-
-                if (!isset($_POST["lastName"]) || strlen($_POST["firstName"]) != 0 || strlen($_POST["firstName"]) <= 50) {
-                    $lastName = mysqli_real_escape_string($mysqli, $_POST["lastName"]);
-                } else {
-                    $lastName = "NULL";
-                }
-
-                $username = mysqli_real_escape_string($mysqli, $_POST["username"]);
+                $email = mysqli_real_escape_string($mysqli, $_POST["email"]);
                 $password = mysqli_real_escape_string($mysqli, $_POST["password"]);
 
-                $sql = "SELECT * FROM uzytkownicy WHERE nazwa_uzytkownika = ?"; // sprawdzanie czy nazwa użytkownika nie jest zajęta
+                $sql = "SELECT * FROM uzytkownicy WHERE email = ?"; // sprawdzanie czy Adres e-mail nie jest zajęta
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("s", $username);
+                $stmt->bind_param("s", $email);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $data = $result->fetch_all(MYSQLI_ASSOC);
 
                 if (count($data) != 0) {
-                    echo ("Nazwa użytkownika zajęta.");
+                    echo ("Adres e-mail zajęty.");
                     return;
                 }
 
                 $passwordHash = password_hash($password, PASSWORD_DEFAULT); // do bazy danych zapisywany jest hasz hasła
 
-
-                $sql = "INSERT INTO uzytkownicy(nazwa_uzytkownika,haslo) VALUES (?,?)";
+                $sql = "INSERT INTO uzytkownicy(email,haslo) VALUES (?,?)";
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("ss", $username, $passwordHash);
+                $stmt->bind_param("ss", $email, $passwordHash);
                 $stmt->execute();
+
+                $sql = "SELECT * FROM klienci WHERE email = ?"; // sprawdzanie czy email jest uzywany przez ktoregos z klientow
+                $stmt = $mysqli->prepare($sql);
+                $stmt->bind_param("s", $email);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $data = $result->fetch_all(MYSQLI_ASSOC);
+
+                if(count($data) == 0){
+                    $sql = "INSERT INTO klienci(email) VALUES (?)";
+                    $stmt = $mysqli->prepare($sql);
+                    $stmt->bind_param("s", $email);
+                    $stmt->execute();
+                }
+                $sql = "UPDATE uzytkownicy SET id_klienta = (SELECT id FROM klienci WHERE email = ?) WHERE email = ?";
+                $stmt = $mysqli->prepare($sql);
+                $stmt->bind_param("ss", $email, $email);
+                $stmt->execute();
+
                 header("Location: login.php"); // przekierowanie do formularza logowania
 
                 ?>

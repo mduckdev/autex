@@ -3,6 +3,7 @@ require(dirname(__FILE__) . "/" . "./includes/session.php"); //zaimportowanie pl
 require(dirname(__FILE__) . "/" . "./includes/csp.php");
 include_once(dirname(__FILE__) . "/" . "./includes/auth.php");
 requireAuth(); // ta funkcja przekierowuje do formularza logowania jeśli użytkownik nie jest zalogowany
+requireEmployee();
 ?>
 <!DOCTYPE html>
 <html lang="en">

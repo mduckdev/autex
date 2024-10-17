@@ -2,6 +2,7 @@
 require(dirname(__FILE__) . "/" . "./includes/session.php");
 include_once(dirname(__FILE__) . "/" . "./includes/auth.php");
 requireAuth();
+requireEmployee();
 require(dirname(__FILE__) . "/" . "./includes/csp.php");
 
 ?>

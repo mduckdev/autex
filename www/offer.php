@@ -3,6 +3,7 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
 require(dirname(__FILE__) . "/" . "./includes/csp.php");
 include_once(dirname(__FILE__) . "/" . "./includes/auth.php");
 requireAuth();
+requireEmployee();
 ?>
 <!DOCTYPE html>
 <html lang="en">
