@@ -93,7 +93,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 $data = $results->fetch_all(MYSQLI_ASSOC);
             }
 
-            if (isset($_GET['rent'])) // jeśli włączony jest tryb wypożyczania dodatkowa kolumna umożliwia wybór klienta
+            if (isset($_GET['rent']) && $_GET['rent']=="on") // jeśli włączony jest tryb wypożyczania dodatkowa kolumna umożliwia wybór klienta
                 $col = "<td>Wybierz klienta który chce wypożyczyć</td>";
             else
                 $col = "";
@@ -120,7 +120,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 $email = htmlspecialchars($klient["email"]);
                 $data_ur = htmlspecialchars($klient["data_ur"]);
 
-                if (isset($_GET['rent']))
+                if (isset($_GET['rent']) && $_GET['rent']=="on")
                     $col = "<td><a href=\"offer.php?id_k=$id&rent=on&onlyavailable=on\">Wybierz</a></td>"; //jeśli tryb wynajmu jest włączony wyświetlany jest link do pliku offer php z id wybranego klienta, włączonym trybem wynajmu oraz filtrem żeby pokazane zostały tylko dostępne auta
                 else
                     $col = "";
@@ -133,8 +133,8 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 echo "<td>$email</td>";
                 echo "<td>$data_ur</td>"; //wyświetlanie danych klientów, w ostatniej kolumnie jest link do historii wypożyczeń klienta oraz przycisk do usunięcia jego danych z bazy 
                 echo "<td>
-                            <a href=\"rents.php?id_k=$id\">Historia wypożyczeń</a>
-                            
+                            <a href=\"rents.php?id_k=$id\">Historia wypożyczeń</a> <br>
+                            <a href=\"edit_client.php?id_k=$id\">Edytuj</a>
                             <form action=\"delete.php\" method=\"POST\" id=\"\" class=\"require-additional-confirm delete-form\">
                                 <input type=\"hidden\" name=\"csrf_token\" value=\"$csrf_token\">
                                 <input type=\"hidden\" name=\"id_k\" value=\"$id\">
