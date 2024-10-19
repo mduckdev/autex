@@ -29,20 +29,16 @@ def login(email, password):
 
 def test_login_success():
     response = login(VALID_USERNAME, VALID_PASSWORD)
-    # Sprawdź, czy zalogowano się poprawnie
     assert response.url == 'http://localhost/autex/www/index.php'
 
 def test_login_wrong_password():
     response = login(VALID_USERNAME, INVALID_PASSWORD)
-    # Sprawdź, czy wyświetlany jest komunikat o błędzie logowania
     assert "Adres e-mail lub hasło jest niepoprawne" in response.text
 
 def test_login_wrong_email():
     response = login(INVALID_USERNAME, VALID_PASSWORD)
-    # Sprawdź, czy wyświetlany jest komunikat o błędzie logowania
     assert "Adres e-mail lub hasło jest niepoprawne" in response.text
 
 def test_login_wrong_email_and_password():
     response = login(INVALID_USERNAME, INVALID_PASSWORD)
-    # Sprawdź, czy wyświetlany jest komunikat o błędzie logowania
     assert "Adres e-mail lub hasło jest niepoprawne" in response.text

@@ -8,8 +8,8 @@ REGISTER_URL = 'http://localhost/autex/www/register.php'
 def gen_random_str(length):
     return ''.join(random.choices(string.ascii_letters, k=length))
 # Dane do rejestracji
-VALID_USERNAME_UNIQUE = 'testuser'+gen_random_str(10)
-VALID_USERNAME = 'testuser'
+VALID_USERNAME_UNIQUE = 'testuser'+gen_random_str(10)+"@example.com"
+VALID_USERNAME = 'testuser@example.com'
 VALID_PASSWORD = 'testpassword'
 
 
@@ -36,7 +36,7 @@ def register(email, password,password_repeat, first_name=None, last_name=None):
     return response
 
 def test_register_success():
-    response = register(VALID_USERNAME_UNIQUE, VALID_PASSWORD,VALID_PASSWORD)
+    response = register(VALID_USERNAME_UNIQUE, VALID_PASSWORD, VALID_PASSWORD)
     # Sprawdź, czy rejestracja zakończyła się sukcesem
     assert response.url == 'http://localhost/autex/www/login.php'
 

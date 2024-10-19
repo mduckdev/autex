@@ -86,14 +86,72 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                     return;
                 }
 
+                $plaintext_code = bin2hex(random_bytes(32));
+                $activation_code = hash("sha256",$plaintext_code);
+                $code_valid_date =  date("Y-m-d h:m:s", (time() + (24*60*60)));
+
+                require(dirname(__FILE__) . "/" . "./includes/phpmailer.php");
+                $mail->setFrom("text@autex.com");
+                $mail->addAddress($email);
+                $mail->Subject = 'Kod aktywacyjny';
+                $mail->Body = "<html>
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Aktywacja konta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: auto;
+            max-width: 500px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            word-break: break-all; /* Zawijanie długiego linku */
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .emoji {
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class=\"container\">
+        <p class=\"emoji\">🎉 Witaj! 🎉</p>
+        <p>Odwiedź ten link, aby aktywować konto:</p>
+        <a href=\"http://localhost/autex/www/activate.php?code=$plaintext_code\">
+            <span style=\"word-break: break-all;\">http://localhost/autex/www/activate.php?code=$plaintext_code</span>
+        </a>
+        <p class=\"emoji\">🔗 Dziękujemy za dołączenie do nas!</p>
+    </div>
+</body>
+</html>";
+
+                $mail->isHTML(true);
+                $mail->send();
+
                 $passwordHash = password_hash($password, PASSWORD_DEFAULT); // do bazy danych zapisywany jest hasz hasła
 
-                $sql = "INSERT INTO uzytkownicy(email,haslo) VALUES (?,?)";
+                $sql = "INSERT INTO uzytkownicy(email,haslo,kod_aktywacyjny,kod_waznosc) VALUES (?,?,?,?)";
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("ss", $email, $passwordHash);
+                $stmt->bind_param("ssss", $email, $passwordHash,$activation_code,$code_valid_date);
                 $stmt->execute();
 
-                $sql = "SELECT * FROM klienci WHERE email = ?"; // sprawdzanie czy email jest uzywany przez ktoregos z klientow
+                $sql = "SELECT * FROM klienci WHERE email = ?"; // sprawdzanie czy email jest uzywany przez ktoregos z istniejacych klientow
                 $stmt = $mysqli->prepare($sql);
                 $stmt->bind_param("s", $email);
                 $stmt->execute();

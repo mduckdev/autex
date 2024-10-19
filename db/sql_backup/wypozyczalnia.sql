@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Paź 17, 2024 at 06:28 PM
+-- Generation Time: Paź 19, 2024 at 11:34 AM
 -- Wersja serwera: 10.4.32-MariaDB
 -- Wersja PHP: 8.2.12
 
@@ -515,8 +515,7 @@ INSERT INTO `klienci` (`id`, `imie`, `nazwisko`, `nr_tel`, `email`, `data_ur`) V
 (247, 'WOJCIECH', 'MERTA', 455924949, 'woj2803@gmail.com', '1984-07-14'),
 (248, 'WIESŁAW', 'KŁECZEK', 177884934, 'wie7784@gmail.com', '1970-10-27'),
 (249, 'SYLWESTER', 'SZYMAŃSKI', 306372267, 'syl6906@gmail.com', '1965-04-13'),
-(250, 'ANTONI', 'RUCKI', 400992068, 'ant4553@gmail.com', '1948-02-22'),
-(251, '', '', NULL, 'test@test.com', NULL);
+(250, 'ANTONI', 'RUCKI', 400992068, 'ant4553@gmail.com', '1948-02-22');
 
 -- --------------------------------------------------------
 
@@ -530,18 +529,20 @@ CREATE TABLE `uzytkownicy` (
   `haslo` varchar(255) NOT NULL,
   `aktywne` tinyint(1) NOT NULL DEFAULT 0,
   `pracownik` tinyint(1) NOT NULL,
-  `id_klienta` int(11) DEFAULT NULL
+  `id_klienta` int(11) DEFAULT NULL,
+  `kod_aktywacyjny` varchar(32) NOT NULL,
+  `kod_waznosc` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_polish_ci;
 
 --
 -- Dumping data for table `uzytkownicy`
 --
 
-INSERT INTO `uzytkownicy` (`id`, `email`, `haslo`, `aktywne`, `pracownik`, `id_klienta`) VALUES
-(1, 'admin@example.com', '$2a$10$F.Dt638GmBY8Eh6bxpiRT.U19D3ZIWe0hNnx/KL32yu/xYeLbFj0a', 1, 1, NULL),
-(2, 'test', '$2a$10$KkhDLjo.pMQrJH5FGcUu2O4V2vzCUD/CnBcYm2L5Vn5wKCGmSxzc2', 1, 1, 1),
-(5, 'jul1623@gmail.com', '$2y$10$tH/QkTkAVbW/qPRcFj32deucnMWCWZbBQI3PVXgQ1Dh2Cbm00BAFq', 0, 0, 3),
-(6, 'test@test.com', '$2y$10$sEIpDNOsDNH9poks9L7CueEE2nULVMjgL19gey9ZIoeJgVc.GtSUO', 0, 0, 251);
+INSERT INTO `uzytkownicy` (`id`, `email`, `haslo`, `aktywne`, `pracownik`, `id_klienta`, `kod_aktywacyjny`, `kod_waznosc`) VALUES
+(1, 'admin', '$2a$10$F.Dt638GmBY8Eh6bxpiRT.U19D3ZIWe0hNnx/KL32yu/xYeLbFj0a', 1, 1, NULL, '', NULL),
+(2, 'test@test.com', '$2a$10$KkhDLjo.pMQrJH5FGcUu2O4V2vzCUD/CnBcYm2L5Vn5wKCGmSxzc2', 1, 1, 1, '', NULL),
+(5, 'jul1623@gmail.com', '$2y$10$tH/QkTkAVbW/qPRcFj32deucnMWCWZbBQI3PVXgQ1Dh2Cbm00BAFq', 0, 0, 3, '', NULL);
+
 
 -- --------------------------------------------------------
 
@@ -945,13 +946,13 @@ ALTER TABLE `flota`
 -- AUTO_INCREMENT for table `klienci`
 --
 ALTER TABLE `klienci`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=252;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=257;
 
 --
 -- AUTO_INCREMENT for table `uzytkownicy`
 --
 ALTER TABLE `uzytkownicy`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `wypozyczenia`
