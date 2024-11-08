@@ -13,9 +13,6 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
     <title>Autex - logowanie</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/login.css">
-
-
-
 </head>
 
 <body>
@@ -80,6 +77,8 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
                 $_SESSION["userID"] = $userData["id"];
                 $_SESSION["email"] = $userData["email"] || $userData["imie"];
                 $_SESSION["employee"] = $userData["pracownik"];
+                $_SESSION["clientID"] = $userData["id_klienta"];
+
 
                 header("Location: /autex/www/index.php"); //przekierowanie na główną stronę
                 ?>

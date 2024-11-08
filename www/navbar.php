@@ -21,9 +21,9 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
         if (isLoggedIn()) {
             if(isEmployee()){
                 include "./employee_bar.php";
-            } else {
-                include "./customer_bar.php";
-            }
+            } 
+            echo("<a href=\"my_rents.php\">Moje wypożyczenia</a>");
+            echo("<a href=\"profile.php\">Profil</a>");
             echo ("<a href=\"logout.php\" id=\"last_item\">Wyloguj</a>");
         } else {
             echo ("<a href=\"login.php\" id=\"last_item\">Logowanie | Rejestracja</a>");

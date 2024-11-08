@@ -3,7 +3,6 @@ require(dirname(__FILE__) . "/" . "./includes/session.php");
 require(dirname(__FILE__) . "/" . "./includes/csp.php");
 include_once(dirname(__FILE__) . "/" . "./includes/auth.php");
 requireAuth();
-requireEmployee();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,20 +10,20 @@ requireEmployee();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autex</title>
+    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/return.css">
     <link rel="stylesheet" href="./css/login.css">
 
+
+    <title>Wypożyczalnia samochodów autex</title>
 </head>
 
 <body>
     <?php
-    require(dirname(__FILE__) . "/" . "./navbar.php");
+    require("navbar.php");
     require(dirname(__FILE__) . "/" . "./includes/db.php");
-    if(!isset($_GET["id_k"])){
-        return;
-    }
-    $id_k = mysqli_real_escape_string($mysqli,$_GET["id_k"]);
+    $id_k = mysqli_real_escape_string($mysqli, $_SESSION["clientID"]);
 
     $sql = "SELECT * FROM klienci WHERE id=?"; //zapytanie do bazy sprawdzające czy email lub nr telefonu nie jest zajęty
     $stmt = $mysqli->prepare($sql);
@@ -49,6 +48,7 @@ requireEmployee();
     }
     require(dirname(__FILE__) . "/" . "./client_data_form.php");
     ?>
+    
 </body>
 
 </html>
