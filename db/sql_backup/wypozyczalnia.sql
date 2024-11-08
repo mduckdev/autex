@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Paź 19, 2024 at 11:34 AM
--- Wersja serwera: 10.4.32-MariaDB
--- Wersja PHP: 8.2.12
+-- Host: localhost
+-- Generation Time: Nov 08, 2024 at 01:06 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `flota`
+-- Table structure for table `flota`
 --
 
 CREATE TABLE `flota` (
@@ -249,7 +249,7 @@ INSERT INTO `flota` (`id`, `marka`, `model`, `rocznik`, `kolor`, `przebieg`, `mo
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `klienci`
+-- Table structure for table `klienci`
 --
 
 CREATE TABLE `klienci` (
@@ -266,7 +266,7 @@ CREATE TABLE `klienci` (
 --
 
 INSERT INTO `klienci` (`id`, `imie`, `nazwisko`, `nr_tel`, `email`, `data_ur`) VALUES
-(1, 'DANIEL', 'SKRZYPCZYK', 957233818, 'dan2515@gmail.com', '1984-03-10'),
+(1, 'DAMIAN', 'SKRZYPCZYK', 957233818, 'dan2515@gmail.com', '1984-03-10'),
 (2, 'SŁAWOMIR', 'MATOGA', 869852018, 'sła2231@gmail.com', '1973-06-02'),
 (3, 'JULIAN', 'LIPCZYŃSKI', 567186919, 'jul1623@gmail.com', '1960-04-28'),
 (4, 'STEFAN', 'BACZYŃSKI', 497129325, 'ste7800@gmail.com', '1947-09-27'),
@@ -515,12 +515,13 @@ INSERT INTO `klienci` (`id`, `imie`, `nazwisko`, `nr_tel`, `email`, `data_ur`) V
 (247, 'WOJCIECH', 'MERTA', 455924949, 'woj2803@gmail.com', '1984-07-14'),
 (248, 'WIESŁAW', 'KŁECZEK', 177884934, 'wie7784@gmail.com', '1970-10-27'),
 (249, 'SYLWESTER', 'SZYMAŃSKI', 306372267, 'syl6906@gmail.com', '1965-04-13'),
-(250, 'ANTONI', 'RUCKI', 400992068, 'ant4553@gmail.com', '1948-02-22');
+(250, 'ANTONI', 'RUCKI', 400992068, 'ant4553@gmail.com', '1948-02-22'),
+(257, 'adminek', 'adminkowy', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `uzytkownicy`
+-- Table structure for table `uzytkownicy`
 --
 
 CREATE TABLE `uzytkownicy` (
@@ -539,15 +540,14 @@ CREATE TABLE `uzytkownicy` (
 --
 
 INSERT INTO `uzytkownicy` (`id`, `email`, `haslo`, `aktywne`, `pracownik`, `id_klienta`, `kod_aktywacyjny`, `kod_waznosc`) VALUES
-(1, 'admin', '$2a$10$F.Dt638GmBY8Eh6bxpiRT.U19D3ZIWe0hNnx/KL32yu/xYeLbFj0a', 1, 1, NULL, '', NULL),
+(1, 'admin', '$2a$10$F.Dt638GmBY8Eh6bxpiRT.U19D3ZIWe0hNnx/KL32yu/xYeLbFj0a', 1, 1, 257, '', NULL),
 (2, 'test@test.com', '$2a$10$KkhDLjo.pMQrJH5FGcUu2O4V2vzCUD/CnBcYm2L5Vn5wKCGmSxzc2', 1, 1, 1, '', NULL),
-(5, 'jul1623@gmail.com', '$2y$10$tH/QkTkAVbW/qPRcFj32deucnMWCWZbBQI3PVXgQ1Dh2Cbm00BAFq', 0, 0, 3, '', NULL);
-
+(5, 'jul1623@gmail.com', '$2y$10$tH/QkTkAVbW/qPRcFj32deucnMWCWZbBQI3PVXgQ1Dh2Cbm00BAFq', 1, 0, 3, '', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `wypozyczenia`
+-- Table structure for table `wypozyczenia`
 --
 
 CREATE TABLE `wypozyczenia` (
@@ -901,31 +901,31 @@ INSERT INTO `wypozyczenia` (`id`, `id_auta`, `id_klienta`, `data_wypozyczenia`, 
 (335, 52, 132, '2024-01-14 03:01:19', NULL, NULL);
 
 --
--- Indeksy dla zrzutów tabel
+-- Indexes for dumped tables
 --
 
 --
--- Indeksy dla tabeli `flota`
+-- Indexes for table `flota`
 --
 ALTER TABLE `flota`
   ADD PRIMARY KEY (`id`);
 ALTER TABLE `flota` ADD FULLTEXT KEY `marka` (`marka`,`model`,`kolor`);
 
 --
--- Indeksy dla tabeli `klienci`
+-- Indexes for table `klienci`
 --
 ALTER TABLE `klienci`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeksy dla tabeli `uzytkownicy`
+-- Indexes for table `uzytkownicy`
 --
 ALTER TABLE `uzytkownicy`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_klienta` (`id_klienta`);
 
 --
--- Indeksy dla tabeli `wypozyczenia`
+-- Indexes for table `wypozyczenia`
 --
 ALTER TABLE `wypozyczenia`
   ADD PRIMARY KEY (`id`),
@@ -946,7 +946,7 @@ ALTER TABLE `flota`
 -- AUTO_INCREMENT for table `klienci`
 --
 ALTER TABLE `klienci`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=257;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=258;
 
 --
 -- AUTO_INCREMENT for table `uzytkownicy`
