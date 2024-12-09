@@ -45,7 +45,7 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             } else {
                 $id_a = mysqli_real_escape_string($mysqli, intval($_GET['id_a']));
             }
-
+            $id_uz=mysqli_real_escape_string($mysqli, intval($_SESSION["userID"]));
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 require(dirname(__FILE__) . "/" . "./includes/csrf.php");
 
@@ -88,12 +88,12 @@ require(dirname(__FILE__) . "/" . "./includes/csp.php");
             $rent_data = $data[0];
             if ($_SERVER["REQUEST_METHOD"] == "POST") { //metoda post oznacza że potwierdzono wypożyczenie i przesłano formularz
                 $sql =
-                    "INSERT INTO wypozyczenia(data_wypozyczenia,id_klienta,id_auta) VALUES (?,?,?)"; // dodawanie nowego wypozyczenia do bazy
+                    "INSERT INTO wypozyczenia(data_wypozyczenia,id_klienta,id_auta,id_uzytkownika) VALUES (?,?,?,?)"; // dodawanie nowego wypozyczenia do bazy
                 $start_date = date("Y-m-d h:m:s", time());
 
 
                 $stmt = $mysqli->prepare($sql);
-                $stmt->bind_param("sii", $start_date, $id_k, $id_a);
+                $stmt->bind_param("siii", $start_date, $id_k, $id_a, $id_uz);
                 $stmt->execute();
 
                 $sql = "UPDATE flota
